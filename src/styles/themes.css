@@ -1,6 +1,10 @@
-/* Paleta de colores. Toda la app usa estas variables; la v0.4 permitirá cambiarlas. */
+/* Colores neutros y valores por defecto (paleta Clásico).
+   La paleta elegida y los colores propios se inyectan desde src/app/theme.js
+   con la misma estructura, así que estos valores solo se ven si falla el JS.
+
+   Modo: sin atributo = sigue al sistema; data-theme="light" | "dark" = forzado. */
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
   --bg: #f7f6f2;
   --surface: #ffffff;
   --text: #1d1d1b;
@@ -23,7 +27,8 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
     --bg: #151513;
     --surface: #1e1e1b;
     --text: #ecebe6;
@@ -44,4 +49,27 @@
     --x3-bg: #ff8a7a;
     --x3-fg: #2b0905;
   }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #151513;
+  --surface: #1e1e1b;
+  --text: #ecebe6;
+  --muted: #a3a29b;
+  --line: #393934;
+  --accent: #7aa7ff;
+  --accent-fg: #0b1a33;
+  --focus: #7aa7ff;
+  --danger: #ff8a7a;
+
+  --work-bg: #4a3317;
+  --work-fg: #f6c58c;
+  --rest-bg: #26381c;
+  --rest-fg: #a9d58a;
+
+  --x2-bg: #f6c58c;
+  --x2-fg: #2a1a05;
+  --x3-bg: #ff8a7a;
+  --x3-fg: #2b0905;
 }

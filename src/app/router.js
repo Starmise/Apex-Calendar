@@ -4,6 +4,7 @@
 //   #/semana/2026-08-02    vista semana (se normaliza al domingo)
 //   #/dia/2026-08-04       vista día
 //   #/buscar/2026-12-25    buscador (la fecha es opcional)
+//   #/ajustes              apariencia y datos
 //
 // Cualquier ruta desconocida o fecha inválida cae en el mes de hoy.
 
@@ -13,7 +14,7 @@ import { addDays, addMonths, isValidISO, startOfMonth, startOfWeek } from '../co
 export const CALENDAR_VIEWS = ['mes', 'semana', 'dia'];
 
 /** Otras pantallas. La fecha es opcional y solo la usa el buscador. */
-export const PAGE_VIEWS = ['buscar'];
+export const PAGE_VIEWS = ['buscar', 'ajustes'];
 
 /** Fecha canónica de cada vista (mes → día 1, semana → domingo). */
 function normalize(view, iso) {

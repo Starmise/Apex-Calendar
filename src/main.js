@@ -5,6 +5,10 @@ import { renderMonth } from './views/month.js';
 import { renderWeek } from './views/week.js';
 import { renderDay } from './views/day.js';
 import { renderSearch, upcomingPanel } from './views/search.js';
+import { renderSettings } from './views/settings.js';
+import { createStore } from './store/storage.js';
+import { normalizeSettings } from './core/settings.js';
+import { applyTheme } from './app/theme.js';
 import { addDays, todayISO } from './core/dates.js';
 import { CALENDAR_VIEWS, focusDate, parseRoute, routeFor, routeHash, shiftRoute } from './app/router.js';
 
@@ -15,6 +19,30 @@ const nextBtn = document.getElementById('next');
 const todayBtn = document.getElementById('today');
 const tabs = [...document.querySelectorAll('.tabs a[data-view]')];
 document.getElementById('version').textContent = `v${__APP_VERSION__}`;
+
+const store = createStore();
+let settings = normalizeSettings(store.get('settings'));
+applyTheme(settings);
+// En modo automático, la barra del navegador sigue al sistema.
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => applyTheme(settings));
+
+/** Cambia ajustes, los guarda y los aplica. */
+function updateSettings(patch, { rerender = true } = {}) {
+  settings = normalizeSettings({ ...settings, ...patch });
+  store.set('settings', settings);
+  applyTheme(settings);
+  if (rerender) renderKeepingFocus();
+}
+
+/** Vuelve a dibujar la vista sin perder el control que tenía el foco. */
+function renderKeepingFocus() {
+  const active = document.activeElement;
+  const id = active?.id;
+  const key = active?.name && active.type === 'radio' ? `input[name="${active.name}"]:checked` : null;
+  render();
+  const target = (id && document.getElementById(id)) || (key && view.querySelector(key));
+  target?.focus();
+}
 
 const PERIOD = {
   mes: ['Mes anterior', 'Mes siguiente'],
@@ -53,6 +81,9 @@ function render() {
   if (route.view === 'mes') renderMonth(view, opts);
   if (route.view === 'semana') renderWeek(view, opts);
   if (route.view === 'dia') renderDay(view, { ...opts, extras: (iso) => [upcomingPanel(iso, t)] });
+  if (route.view === 'ajustes') {
+    renderSettings(view, { settings, onChange: updateSettings, persistent: store.persistent });
+  }
   if (route.view === 'buscar') {
     renderSearch(view, {
       ...opts,

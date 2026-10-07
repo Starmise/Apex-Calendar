@@ -2,7 +2,21 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); versionado semántico.
 
-## [0.3.0] - 2026-10-07
+## [0.4.0] - 2026-10-07
+
+### Agregado
+- Pantalla de ajustes (`#/ajustes`).
+- Modo claro, oscuro o automático (sigue al sistema), sin parpadeo al abrir.
+- Cinco paletas: Clásico, Océano, Lavanda, Sobrio y Alto contraste, cada una con versión clara y oscura.
+- Colores propios para trabajo, descanso, domingo x2, festivo x3 y acento; el color del texto se calcula solo para que siempre se lea.
+- Los ajustes se guardan en `apex.settings` (solo en el navegador), con versión de datos y migraciones (`apex.version`).
+- Si el navegador no deja guardar, la app sigue funcionando y lo avisa.
+- Pruebas de contraste: todo el texto de todas las paletas cumple WCAG AA (4.5:1).
+
+### Cambiado
+- El día de hoy se marca con doble anillo para verse sobre cualquier color.
+
+ - 2026-10-07
 
 ### Agregado
 - Buscador por fecha (`#/buscar/AAAA-MM-DD`): dice si ese día se trabaja o se descansa, el horario, si es festivo y la paga, con atajos para hoy, mañana, en una semana y en un mes.

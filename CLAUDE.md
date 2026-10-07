@@ -29,11 +29,15 @@ Sitio web estático (GitHub Pages, costo cero) donde los empleados consultan su 
 src/core/dates.js        fechas 'YYYY-MM-DD', aritmética en UTC (nunca usar fechas locales para el ciclo)
 src/core/schedule.js     getDayInfo(iso) → { type, start, end, hours, holiday, isSunday, pay, cycleIndex }
 src/core/search.js       findNext, nextRest, nextWork, nextFreeWeekend, nextHoliday, streak (límite 2 años)
-src/data/                default-schedule.json, holidays-mx.js
+src/core/colors.js       contraste WCAG, readableText(bg) para colores propios
+src/core/settings.js     normalizeSettings: valida apex.settings (theme, palette, colors)
+src/store/storage.js     createStore(): apex.* en localStorage, migraciones (DATA_VERSION), memoria si falla
+src/app/theme.js         buildThemeCSS/applyTheme: inyecta la paleta como <style id="apex-theme">
+src/data/                default-schedule.json, holidays-mx.js, palettes.js (tests/colors.test.js verifica contraste AA)
 src/app/router.js        rutas por hash (puro, probado): parseRoute, routeHash, shiftRoute
-src/views/               DOM puro, sin framework: common, month, week, day, search
+src/views/               DOM puro, sin framework: common, month, week, day, search, settings
 src/main.js              arranque, render por ruta, teclado: #/mes/AAAA-MM, #/semana/AAAA-MM-DD, #/dia/AAAA-MM-DD
-src/styles/themes.css    TODOS los colores como variables CSS (claro + oscuro)
+src/styles/themes.css    neutros + valores por defecto; modo: sin atributo = sistema, html[data-theme=light|dark] = forzado
 tests/                   Vitest
 .github/workflows/deploy.yml  test + build en push/PR; publica en Pages solo desde main
 ```
@@ -55,7 +59,7 @@ Principios: `core/` no toca DOM ni localStorage. Sin framework. Vite 8 + Vitest 
 - [x] **v0.1.0** — motor del ciclo y festivos con pruebas, vista mes con paga x2/x3, despliegue automático.
 - [x] **v0.2.0** — vistas semana y día, URLs por fecha (`#/semana/…`, `#/dia/…`), navegación con teclado.
 - [x] **v0.3.0** — buscador por fecha (`#/buscar/…`): trabajo/descanso, festivo, paga, próximo descanso, próximo fin de semana libre. Nota: el rol actual nunca tiene sábado y domingo libres seguidos; el buscador lo dice y ofrece el siguiente sábado y domingo libres por separado.
-- [ ] **v0.4** — personalización: temas, selector de colores (sobre `themes.css`), modo oscuro manual.
+- [x] **v0.4.0** — personalización (`#/ajustes`): modo claro/oscuro/auto, 5 paletas (`src/data/palettes.js`), colores propios con texto calculado, contraste probado.
 - [ ] **v0.5** — recordatorios en localStorage (`apex.reminders`), exportar/importar JSON.
 - [ ] **v1.0** — PWA instalable y offline, notificaciones (solo con la app abierta), accesibilidad.
 - [ ] Después — excepciones por fecha (vacaciones, permisos) en `apex.overrides`; editor de ciclo.

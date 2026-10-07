@@ -7,6 +7,13 @@
     <meta name="theme-color" content="#1f5fd1" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <title>Apex Calendar</title>
+    <script>
+      // Aplica el modo claro/oscuro guardado antes de pintar, para evitar un parpadeo.
+      try {
+        var t = JSON.parse(localStorage.getItem('apex.settings') || '{}').theme;
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#view">Saltar al contenido</a>
@@ -18,6 +25,7 @@
         <a href="#/semana" data-view="semana">Semana</a>
         <a href="#/dia" data-view="dia">Día</a>
         <a href="#/buscar" data-view="buscar">Buscar</a>
+        <a href="#/ajustes" data-view="ajustes">Ajustes</a>
       </nav>
     </header>
 
