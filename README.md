@@ -1,10 +1,10 @@
 # Apex Calendar
 
-Tu calendario de trabajo en el celular o la computadora. De un vistazo sabes **qué días trabajas, qué días descansas y cuándo te pagan doble o triple**.
+Nuestro calendario de trabajo para el celular o la computadora. Lo cree para que de un vistazo sepamos **qué días trabajamos, qué días descansamos y cuándo nos pagan doble o triple**.
 
 ### 👉 Ábrelo aquí: **[starmise.github.io/Apex-Calendar](https://starmise.github.io/Apex-Calendar/)**
 
-No necesitas crear cuenta, ni contraseña, ni descargar nada de la tienda de apps. Es gratis.
+No se necesita crear cuenta, ni contraseña, ni descargar nada de la tienda de apps. Es gratis.
 
 ---
 
@@ -12,7 +12,7 @@ No necesitas crear cuenta, ni contraseña, ni descargar nada de la tienda de app
 
 | Lo que ves | Qué significa |
 | --- | --- |
-| ⬛ Día de color **verde oscuro** (como un pizarrón) | Trabajas. En el día viene tu horario, por ejemplo **8–20** (de 8 de la mañana a 8 de la noche). |
+| 🟩 Día de color **verde oscuro** (como un pizarrón) | Trabajas. En el día viene tu horario, por ejemplo **8–20** (de 8 de la mañana a 8 de la noche). |
 | ⬜ Día **blanco** | Descansas. |
 | Etiqueta **x2** | Es domingo y trabajas: **paga doble**. |
 | Etiqueta **x3** | Es día festivo y trabajas: **paga triple**. |
