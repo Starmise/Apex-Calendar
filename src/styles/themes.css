@@ -1,75 +1,75 @@
-/* Colores neutros y valores por defecto (paleta Clásico).
+/* Colores neutros y valores por defecto (paleta Pizarrón).
    La paleta elegida y los colores propios se inyectan desde src/app/theme.js
    con la misma estructura, así que estos valores solo se ven si falla el JS.
 
    Modo: sin atributo = sigue al sistema; data-theme="light" | "dark" = forzado. */
 :root {
   color-scheme: light;
-  --bg: #f7f6f2;
+  --bg: #e6eaee;
   --surface: #ffffff;
-  --text: #1d1d1b;
-  --muted: #6b6a64;
-  --line: #dcdbd4;
-  --accent: #1f5fd1;
+  --text: #17202a;
+  --muted: #4f5b66;
+  --line: #c3ccd4;
+  --accent: #2e4a3e;
   --accent-fg: #ffffff;
-  --focus: #1f5fd1;
-  --danger: #b42318;
+  --focus: #c06f00;
+  --danger: #b4232a;
 
-  --work-bg: #fadfc0;
-  --work-fg: #8a4a06;
-  --rest-bg: #e2efd3;
-  --rest-fg: #3d6b1f;
+  --work-bg: #2e4a3e;
+  --work-fg: #ffffff;
+  --rest-bg: #f7f9fa;
+  --rest-fg: #33404c;
 
-  --x2-bg: #8a4a06;
-  --x2-fg: #ffffff;
-  --x3-bg: #b42318;
+  --x2-bg: #f2b134;
+  --x2-fg: #2b1d00;
+  --x3-bg: #cf3540;
   --x3-fg: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
-    --bg: #151513;
-    --surface: #1e1e1b;
-    --text: #ecebe6;
-    --muted: #a3a29b;
-    --line: #393934;
-    --accent: #7aa7ff;
-    --accent-fg: #0b1a33;
-    --focus: #7aa7ff;
-    --danger: #ff8a7a;
+    --bg: #10161c;
+    --surface: #18212a;
+    --text: #e6edf3;
+    --muted: #9aa7b3;
+    --line: #2c3946;
+    --accent: #9fd0b6;
+    --accent-fg: #0a1c14;
+    --focus: #f2b134;
+    --danger: #ff8a8e;
 
-    --work-bg: #4a3317;
-    --work-fg: #f6c58c;
-    --rest-bg: #26381c;
-    --rest-fg: #a9d58a;
+    --work-bg: #7fb59b;
+    --work-fg: #0a1c14;
+    --rest-bg: #1d2731;
+    --rest-fg: #b8c4cf;
 
-    --x2-bg: #f6c58c;
-    --x2-fg: #2a1a05;
-    --x3-bg: #ff8a7a;
-    --x3-fg: #2b0905;
+    --x2-bg: #f2b134;
+    --x2-fg: #2b1d00;
+    --x3-bg: #ff6b70;
+    --x3-fg: #2a0405;
   }
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #151513;
-  --surface: #1e1e1b;
-  --text: #ecebe6;
-  --muted: #a3a29b;
-  --line: #393934;
-  --accent: #7aa7ff;
-  --accent-fg: #0b1a33;
-  --focus: #7aa7ff;
-  --danger: #ff8a7a;
+  --bg: #10161c;
+  --surface: #18212a;
+  --text: #e6edf3;
+  --muted: #9aa7b3;
+  --line: #2c3946;
+  --accent: #9fd0b6;
+  --accent-fg: #0a1c14;
+  --focus: #f2b134;
+  --danger: #ff8a8e;
 
-  --work-bg: #4a3317;
-  --work-fg: #f6c58c;
-  --rest-bg: #26381c;
-  --rest-fg: #a9d58a;
+  --work-bg: #7fb59b;
+  --work-fg: #0a1c14;
+  --rest-bg: #1d2731;
+  --rest-fg: #b8c4cf;
 
-  --x2-bg: #f6c58c;
-  --x2-fg: #2a1a05;
-  --x3-bg: #ff8a7a;
-  --x3-fg: #2b0905;
+  --x2-bg: #f2b134;
+  --x2-fg: #2b1d00;
+  --x3-bg: #ff6b70;
+  --x3-fg: #2a0405;
 }

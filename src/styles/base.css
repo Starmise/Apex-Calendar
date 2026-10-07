@@ -270,6 +270,10 @@ button:disabled {
   vertical-align: top;
 }
 
+.month-grid td.empty {
+  background: var(--bg);
+}
+
 .month-grid tr > :last-child {
   border-right: 0;
 }
@@ -318,8 +322,8 @@ button:disabled {
 }
 
 .day.today {
-  /* Doble anillo: se ve sobre cualquier color de día. */
-  box-shadow: inset 0 0 0 3px var(--accent), inset 0 0 0 5px var(--surface);
+  /* Doble anillo (color del texto + fondo): se ve sobre cualquier color de día. */
+  box-shadow: inset 0 0 0 3px var(--text), inset 0 0 0 5px var(--surface);
 }
 
 .day:focus-visible {
@@ -360,7 +364,7 @@ button:disabled {
   margin-top: auto;
   font-size: 0.72rem;
   font-weight: 700;
-  color: var(--accent);
+  color: currentColor;
 }
 
 .pay {

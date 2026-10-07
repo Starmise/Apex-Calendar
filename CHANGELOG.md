@@ -2,7 +2,19 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); versionado semántico.
 
-## [1.0.0] - 2026-10-07
+## [1.1.0] - 2026-10-07
+
+### Cambiado
+- Paletas nuevas, cada una con su propio fondo, texto y líneas además de los colores del rol, para que se distingan de verdad entre sí: **Pizarrón** (nueva predeterminada: verde pizarrón y blanco sobre gris frío), **Vino y menta**, **Cítrico** (amarillo limón y verde azulado), **Lavanda** (morado intenso) y **Alto contraste**. Se quitaron Clásico, Océano y Sobrio; quien las tenía elegidas pasa a Pizarrón.
+- El día de hoy se marca con un anillo del color del texto, visible en cualquier paleta.
+- El puntito de recordatorio usa el color del texto del día.
+- Ejemplo del formulario de recordatorios: "Hoy nos traen comida a la oficina".
+- README reescrito para usuarios sin experiencia técnica; lo técnico pasa a `DESARROLLO.md`.
+
+### Agregado
+- Pruebas: cada paleta trae el juego completo de colores, fondos y colores de trabajo distintos entre paletas, y anillo de foco visible (3:1).
+
+ - 2026-10-07
 
 ### Agregado
 - App instalable (PWA): manifiesto, íconos (incluido maskable para Android y ícono para iPhone) y accesos directos a Hoy, Buscar y Recordatorios.
