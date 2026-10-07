@@ -28,10 +28,22 @@ Sitio web estático (GitHub Pages, costo cero) donde los empleados consultan su 
 ```
 src/core/dates.js        fechas 'YYYY-MM-DD', aritmética en UTC (nunca usar fechas locales para el ciclo)
 src/core/schedule.js     getDayInfo(iso) → { type, start, end, hours, holiday, isSunday, pay, cycleIndex }
-src/data/                default-schedule.json, holidays-mx.js
-src/views/month.js       vista mes (DOM puro, sin framework)
-src/main.js              router por hash: #/mes/AAAA-MM
-src/styles/themes.css    TODOS los colores como variables CSS (claro + oscuro)
+src/core/search.js       findNext, nextRest, nextWork, nextFreeWeekend, nextHoliday, streak (límite 2 años)
+src/core/colors.js       contraste WCAG, readableText(bg) para colores propios
+src/core/settings.js     normalizeSettings: valida apex.settings (theme, palette, colors)
+src/core/reminders.js    { id, date, time|null, text, repeat, notify }; occursOn, upcoming, respaldo (buildBackup/parseBackup)
+src/store/storage.js     createStore(): apex.* en localStorage, migraciones (DATA_VERSION), memoria si falla
+src/app/theme.js         buildThemeCSS/applyTheme: inyecta la paleta como <style id="apex-theme">
+src/app/toast.js         avisos con aria-live (uno a la vez, con acción opcional)
+src/app/pwa.js           registro del SW (solo en build), "versión nueva · Actualizar", instalar, online/offline
+src/app/notifier.js      revisa cada 20 s dueReminders(); notificación del sistema + aviso en la app
+src/pwa/sw.js            plantilla del SW; el plugin pwaPrecache de vite.config.js inserta la lista de archivos y la versión de caché
+public/                  manifest.webmanifest, íconos 192/512/maskable, apple-touch-icon
+src/data/                default-schedule.json, holidays-mx.js, palettes.js (tests/colors.test.js verifica contraste AA)
+src/app/router.js        rutas por hash (puro, probado): parseRoute, routeHash, shiftRoute
+src/views/               DOM puro, sin framework: common, month, week, day, search, settings, reminders, data
+src/main.js              arranque, render por ruta, teclado: #/mes/AAAA-MM, #/semana/AAAA-MM-DD, #/dia/AAAA-MM-DD
+src/styles/themes.css    neutros + valores por defecto; modo: sin atributo = sistema, html[data-theme=light|dark] = forzado
 tests/                   Vitest
 .github/workflows/deploy.yml  test + build en push/PR; publica en Pages solo desde main
 ```
@@ -51,16 +63,21 @@ Principios: `core/` no toca DOM ni localStorage. Sin framework. Vite 8 + Vitest 
 ## Roadmap
 
 - [x] **v0.1.0** — motor del ciclo y festivos con pruebas, vista mes con paga x2/x3, despliegue automático.
-- [ ] **v0.2** — vistas semana y día, URLs por fecha (`#/semana/…`, `#/dia/…`).
-- [ ] **v0.3** — buscador por fecha: trabajo/descanso, festivo, paga, próximo descanso, próximo fin de semana libre.
-- [ ] **v0.4** — personalización: temas, selector de colores (sobre `themes.css`), modo oscuro manual.
-- [ ] **v0.5** — recordatorios en localStorage (`apex.reminders`), exportar/importar JSON.
-- [ ] **v1.0** — PWA instalable y offline, notificaciones (solo con la app abierta), accesibilidad.
+- [x] **v0.2.0** — vistas semana y día, URLs por fecha (`#/semana/…`, `#/dia/…`), navegación con teclado.
+- [x] **v0.3.0** — buscador por fecha (`#/buscar/…`): trabajo/descanso, festivo, paga, próximo descanso, próximo fin de semana libre. Nota: el rol actual nunca tiene sábado y domingo libres seguidos; el buscador lo dice y ofrece el siguiente sábado y domingo libres por separado.
+- [x] **v0.4.0** — personalización (`#/ajustes`): modo claro/oscuro/auto, 5 paletas (`src/data/palettes.js`), colores propios con texto calculado, contraste probado.
+- [x] **v0.5.0** — recordatorios (`#/recordatorios`, `apex.reminders`) con repetición semana/14 días/mes/año; exportar/importar/borrar en Ajustes → Tus datos.
+- [x] **v1.0.0** — PWA instalable y offline (SW propio en `src/pwa/sw.js`), avisos de recordatorios con la app abierta, accesibilidad revisada con axe-core (WCAG 2.2 AA, 0 incidencias).
 - [ ] Después — excepciones por fecha (vacaciones, permisos) en `apex.overrides`; editor de ciclo.
 
-Claves de localStorage previstas: `apex.version`, `apex.settings`, `apex.overrides`, `apex.reminders` (todas con prefijo `apex.` y migraciones por versión).
+Claves de localStorage: `apex.version` (DATA_VERSION de `src/store/storage.js`), `apex.settings`, `apex.reminders`; prevista `apex.overrides`. Al cambiar la forma de algo guardado: subir DATA_VERSION y agregar la migración en `MIGRATIONS`.
+
+Accesibilidad: cada cambio de UI debe pasar axe-core sin incidencias (las pruebas manuales se hicieron con Playwright + axe en todas las vistas, paletas, modos claro/oscuro, 1100 px y 390 px). Los días del mes y la semana llevan su nombre accesible en un `span.visually-hidden` y lo visual va con `aria-hidden` (no usar `aria-label`, rompe "label in name"). Toda paleta nueva debe pasar `tests/colors.test.js`.
 
 ## Notas para sesiones de Claude
 
-- La sesión en la nube de claude.ai no puede hacer push a GitHub (cuenta de GitHub no vinculada). Claude hace commit en la carpeta local y el dueño hace push desde VS Code, o se vincula GitHub en claude.ai.
+- Avisos de recordatorios: solo con la app abierta (no hay servidor push). No prometer avisos con todo cerrado.
+- El rol actual nunca tiene sábado y domingo libres seguidos; `nextFreeWeekend` devuelve null y la UI lo explica.
+
+- GitHub ya está vinculado en claude.ai (app de Claude instalada en Apex-Calendar): Claude puede subir ramas y abrir PR (con `gh api` REST; GraphQL no está disponible). Subir tags desde la sesión da 403: los tags `vX.Y.Z` los crea el dueño después del merge.
 - `node_modules/` no se sube; en Windows correr `npm install` antes de `npm run dev`.
