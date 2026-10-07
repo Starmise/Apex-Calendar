@@ -12,8 +12,8 @@ No necesitas crear cuenta, ni contraseña, ni descargar nada de la tienda de app
 
 | Lo que ves | Qué significa |
 | --- | --- |
-| 🟧 Día de color **naranja** | Trabajas. Abajo del número viene tu horario, por ejemplo **8–20** (de 8 de la mañana a 8 de la noche). |
-| 🟩 Día de color **verde** | Descansas. |
+| ⬛ Día de color **verde oscuro** (como un pizarrón) | Trabajas. En el día viene tu horario, por ejemplo **8–20** (de 8 de la mañana a 8 de la noche). |
+| ⬜ Día **blanco** | Descansas. |
 | Etiqueta **x2** | Es domingo y trabajas: **paga doble**. |
 | Etiqueta **x3** | Es día festivo y trabajas: **paga triple**. |
 | El día con **marco** | Es hoy. |
@@ -21,7 +21,7 @@ No necesitas crear cuenta, ni contraseña, ni descargar nada de la tienda de app
 
 Toca cualquier día para ver todos sus detalles.
 
-> Los colores pueden ser otros si los cambiaste en **Ajustes**.
+> Esos son los colores de la paleta **Pizarrón**, la que viene de inicio. En **Ajustes → Paleta** puedes escoger otra (Vino y menta, Cítrico, Lavanda o Alto contraste); arriba del calendario siempre verás qué color es trabajo y cuál es descanso.
 
 ---
 
@@ -33,7 +33,7 @@ Arriba hay unos botones para moverte por la app:
 - **Semana** — los 7 días de la semana, con tu horario y tus horas.
 - **Día** — todo sobre un solo día: horario, horas, paga y cuándo es tu próximo descanso.
 - **Buscar** — elige cualquier fecha y te dice si ese día trabajas o descansas. Útil para planear una cita, una fiesta o un viaje.
-- **Recordatorios** — apunta cosas que no quieres olvidar ("llevar uniforme", "pagar la renta"). Pueden repetirse cada semana, cada mes, etc.
+- **Recordatorios** — apunta cosas que no quieres olvidar ("hoy nos traen comida a la oficina", "pagar la renta"). Pueden repetirse cada semana, cada mes, etc.
 - **Ajustes** — cambia los colores, activa el modo oscuro, haz un respaldo de tus recordatorios y más.
 
 ---

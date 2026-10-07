@@ -1,82 +1,94 @@
-// Paletas de color. Cada una define los colores del rol para modo claro y oscuro.
-// Los colores neutros (fondo, texto, líneas) viven en themes.css; una paleta puede
-// sobrescribirlos si lo necesita (p. ej. alto contraste).
+// Paletas de color. Cada una es un juego completo (fondo, texto, líneas y colores del rol)
+// para modo claro y oscuro, así que se ven distintas entre sí y no solo cambian dos tonos.
 // tests/colors.test.js comprueba que todo el texto cumpla contraste WCAG AA (4.5:1).
 
 export const PALETTES = [
   {
-    id: 'clasico',
-    name: 'Clásico',
+    // Verde pizarrón para trabajar, blanco para descansar, ámbar para el domingo. Fondo gris frío.
+    id: 'pizarron',
+    name: 'Pizarrón',
     light: {
-      'work-bg': '#fadfc0', 'work-fg': '#8a4a06',
-      'rest-bg': '#e2efd3', 'rest-fg': '#3d6b1f',
-      'x2-bg': '#8a4a06', 'x2-fg': '#ffffff',
-      'x3-bg': '#b42318', 'x3-fg': '#ffffff',
-      accent: '#1f5fd1', 'accent-fg': '#ffffff',
+      bg: '#e6eaee', surface: '#ffffff', text: '#17202a', muted: '#4f5b66', line: '#c3ccd4',
+      'work-bg': '#2e4a3e', 'work-fg': '#ffffff',
+      'rest-bg': '#f7f9fa', 'rest-fg': '#33404c',
+      'x2-bg': '#f2b134', 'x2-fg': '#2b1d00',
+      'x3-bg': '#cf3540', 'x3-fg': '#ffffff',
+      accent: '#2e4a3e', 'accent-fg': '#ffffff', focus: '#c06f00', danger: '#b4232a',
     },
     dark: {
-      'work-bg': '#4a3317', 'work-fg': '#f6c58c',
-      'rest-bg': '#26381c', 'rest-fg': '#a9d58a',
-      'x2-bg': '#f6c58c', 'x2-fg': '#2a1a05',
-      'x3-bg': '#ff8a7a', 'x3-fg': '#2b0905',
-      accent: '#7aa7ff', 'accent-fg': '#0b1a33',
+      bg: '#10161c', surface: '#18212a', text: '#e6edf3', muted: '#9aa7b3', line: '#2c3946',
+      'work-bg': '#7fb59b', 'work-fg': '#0a1c14',
+      'rest-bg': '#1d2731', 'rest-fg': '#b8c4cf',
+      'x2-bg': '#f2b134', 'x2-fg': '#2b1d00',
+      'x3-bg': '#ff6b70', 'x3-fg': '#2a0405',
+      accent: '#9fd0b6', 'accent-fg': '#0a1c14', focus: '#f2b134', danger: '#ff8a8e',
     },
   },
   {
-    id: 'oceano',
-    name: 'Océano',
+    // Vino para trabajar y menta para descansar.
+    id: 'vino',
+    name: 'Vino y menta',
     light: {
-      'work-bg': '#cfe3fb', 'work-fg': '#0b4a8f',
-      'rest-bg': '#e6eef2', 'rest-fg': '#38515f',
-      'x2-bg': '#0b4a8f', 'x2-fg': '#ffffff',
-      'x3-bg': '#b42318', 'x3-fg': '#ffffff',
-      accent: '#0b62c4', 'accent-fg': '#ffffff',
+      bg: '#eef5f1', surface: '#ffffff', text: '#1b2621', muted: '#4c5c54', line: '#c6d8ce',
+      'work-bg': '#7a1f3d', 'work-fg': '#ffffff',
+      'rest-bg': '#cfeedd', 'rest-fg': '#1d4d36',
+      'x2-bg': '#ffd166', 'x2-fg': '#3a2a00',
+      'x3-bg': '#ffffff', 'x3-fg': '#7a1f3d',
+      accent: '#7a1f3d', 'accent-fg': '#ffffff', focus: '#1f8a5b', danger: '#a3123a',
     },
     dark: {
-      'work-bg': '#12345a', 'work-fg': '#a9cdf7',
-      'rest-bg': '#23292e', 'rest-fg': '#b4c2cc',
-      'x2-bg': '#a9cdf7', 'x2-fg': '#0a1d33',
-      'x3-bg': '#ff8a7a', 'x3-fg': '#2b0905',
-      accent: '#6fb0ff', 'accent-fg': '#06203f',
+      bg: '#111816', surface: '#18211d', text: '#e7efe9', muted: '#9fb0a7', line: '#2b3a33',
+      'work-bg': '#e88aa6', 'work-fg': '#2a0a15',
+      'rest-bg': '#1f3a2d', 'rest-fg': '#a9e0c3',
+      'x2-bg': '#ffd166', 'x2-fg': '#3a2a00',
+      'x3-bg': '#ffffff', 'x3-fg': '#7a1f3d',
+      accent: '#e88aa6', 'accent-fg': '#2a0a15', focus: '#6fd3a2', danger: '#ff8fa8',
     },
   },
   {
+    // Amarillo limón para trabajar sobre gris neutro; acento verde azulado.
+    id: 'citrico',
+    name: 'Cítrico',
+    light: {
+      bg: '#efefef', surface: '#ffffff', text: '#1e1e1e', muted: '#575757', line: '#cfcfcf',
+      'work-bg': '#ffd23f', 'work-fg': '#3a2e00',
+      'rest-bg': '#ffffff', 'rest-fg': '#4a4a4a',
+      'x2-bg': '#00777a', 'x2-fg': '#ffffff',
+      'x3-bg': '#d7263d', 'x3-fg': '#ffffff',
+      accent: '#00777a', 'accent-fg': '#ffffff', focus: '#d7263d', danger: '#b51d31',
+    },
+    dark: {
+      bg: '#1d1f20', surface: '#26292a', text: '#f0f0ee', muted: '#a9adaf', line: '#3a3e40',
+      'work-bg': '#ffd23f', 'work-fg': '#3a2e00',
+      'rest-bg': '#2c3032', 'rest-fg': '#cfd2d3',
+      'x2-bg': '#00777a', 'x2-fg': '#ffffff',
+      'x3-bg': '#d7263d', 'x3-fg': '#ffffff',
+      accent: '#3fc1c4', 'accent-fg': '#002a2b', focus: '#ffd23f', danger: '#ff6b7c',
+    },
+  },
+  {
+    // Morado intenso para trabajar, lila claro para descansar; rosa y coral para la paga extra.
     id: 'lavanda',
     name: 'Lavanda',
     light: {
-      'work-bg': '#e6dcfa', 'work-fg': '#4f2a96',
-      'rest-bg': '#fdf1c7', 'rest-fg': '#634b07',
-      'x2-bg': '#4f2a96', 'x2-fg': '#ffffff',
-      'x3-bg': '#b42318', 'x3-fg': '#ffffff',
-      accent: '#6a3fc2', 'accent-fg': '#ffffff',
+      bg: '#f3f0fa', surface: '#ffffff', text: '#221a33', muted: '#5a5070', line: '#d6cfe8',
+      'work-bg': '#5b3fa8', 'work-fg': '#ffffff',
+      'rest-bg': '#ebe5f7', 'rest-fg': '#43386a',
+      'x2-bg': '#ffb3c7', 'x2-fg': '#4a0d22',
+      'x3-bg': '#ff7a59', 'x3-fg': '#2b0b00',
+      accent: '#5b3fa8', 'accent-fg': '#ffffff', focus: '#d63c78', danger: '#b3243f',
     },
     dark: {
-      'work-bg': '#33244f', 'work-fg': '#d3c2f5',
-      'rest-bg': '#3a3215', 'rest-fg': '#f0d98a',
-      'x2-bg': '#d3c2f5', 'x2-fg': '#1d1033',
-      'x3-bg': '#ff8a7a', 'x3-fg': '#2b0905',
-      accent: '#b39bf0', 'accent-fg': '#1d1033',
+      bg: '#15121e', surface: '#1e1a2a', text: '#ece8f6', muted: '#a69fbd', line: '#332d47',
+      'work-bg': '#b9a3ff', 'work-fg': '#1d1240',
+      'rest-bg': '#262036', 'rest-fg': '#c9bfe6',
+      'x2-bg': '#ffb3c7', 'x2-fg': '#4a0d22',
+      'x3-bg': '#ff9a80', 'x3-fg': '#2b0b00',
+      accent: '#b9a3ff', 'accent-fg': '#1d1240', focus: '#ff8fb8', danger: '#ff8fa3',
     },
   },
   {
-    id: 'sobrio',
-    name: 'Sobrio',
-    light: {
-      'work-bg': '#d9d9d2', 'work-fg': '#262624',
-      'rest-bg': '#f6f6f2', 'rest-fg': '#55554f',
-      'x2-bg': '#262624', 'x2-fg': '#ffffff',
-      'x3-bg': '#8c1d18', 'x3-fg': '#ffffff',
-      accent: '#3b3b37', 'accent-fg': '#ffffff',
-    },
-    dark: {
-      'work-bg': '#3d3d39', 'work-fg': '#ecece6',
-      'rest-bg': '#20201e', 'rest-fg': '#a9a9a2',
-      'x2-bg': '#ecece6', 'x2-fg': '#1a1a18',
-      'x3-bg': '#ff8a7a', 'x3-fg': '#2b0905',
-      accent: '#d6d6cf', 'accent-fg': '#1a1a18',
-    },
-  },
-  {
+    // Máximo contraste para leer con poca vista o con mucho sol.
     id: 'contraste',
     name: 'Alto contraste',
     light: {
@@ -85,7 +97,7 @@ export const PALETTES = [
       'rest-bg': '#ffffff', 'rest-fg': '#000000',
       'x2-bg': '#ffd400', 'x2-fg': '#000000',
       'x3-bg': '#ffffff', 'x3-fg': '#a50000',
-      accent: '#0b3d91', 'accent-fg': '#ffffff', focus: '#c40000',
+      accent: '#0b3d91', 'accent-fg': '#ffffff', focus: '#c40000', danger: '#a50000',
     },
     dark: {
       bg: '#000000', surface: '#000000', text: '#ffffff', muted: '#d0d0d0', line: '#9a9a9a',
@@ -93,12 +105,12 @@ export const PALETTES = [
       'rest-bg': '#000000', 'rest-fg': '#ffffff',
       'x2-bg': '#000000', 'x2-fg': '#ffffff',
       'x3-bg': '#000000', 'x3-fg': '#ff8a8a',
-      accent: '#ffd400', 'accent-fg': '#000000', focus: '#00e5ff',
+      accent: '#ffd400', 'accent-fg': '#000000', focus: '#00e5ff', danger: '#ff8a8a',
     },
   },
 ];
 
-export const DEFAULT_PALETTE = 'clasico';
+export const DEFAULT_PALETTE = 'pizarron';
 
 export function getPalette(id) {
   return PALETTES.find((p) => p.id === id) ?? PALETTES.find((p) => p.id === DEFAULT_PALETTE);

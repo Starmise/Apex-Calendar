@@ -4,11 +4,11 @@ import { PALETTES } from '../src/data/palettes.js';
 import { buildThemeCSS, themeVars } from '../src/app/theme.js';
 import { normalizeSettings, DEFAULT_SETTINGS } from '../src/core/settings.js';
 
-// Neutros de themes.css (los que una paleta no sobrescribe).
-const NEUTRAL = {
-  light: { bg: '#f7f6f2', surface: '#ffffff', text: '#1d1d1b', muted: '#6b6a64' },
-  dark: { bg: '#151513', surface: '#1e1e1b', text: '#ecebe6', muted: '#a3a29b' },
-};
+// Cada paleta debe traer el juego completo de colores (no depende de themes.css).
+const TOKENS = [
+  'bg', 'surface', 'text', 'muted', 'line', 'work-bg', 'work-fg', 'rest-bg', 'rest-fg',
+  'x2-bg', 'x2-fg', 'x3-bg', 'x3-fg', 'accent', 'accent-fg', 'focus', 'danger',
+];
 
 describe('utilidades de color', () => {
   it('lee y escribe hex', () => {
@@ -38,13 +38,15 @@ describe('utilidades de color', () => {
 describe('paletas', () => {
   for (const palette of PALETTES) {
     for (const mode of ['light', 'dark']) {
-      const c = { ...NEUTRAL[mode], ...palette[mode] };
+      const c = palette[mode];
+      it(`${palette.name} (${mode}): juego completo de colores`, () => {
+        for (const t of TOKENS) expect(isHex(c[t]), `${palette.id}/${mode}: ${t}`).toBe(true);
+      });
       it(`${palette.name} (${mode}): texto con contraste AA`, () => {
-        for (const k of Object.values(c)) expect(isHex(k), k).toBe(true);
         const pairs = [
           ['work-fg', 'work-bg'], ['rest-fg', 'rest-bg'], ['x2-fg', 'x2-bg'],
           ['x3-fg', 'x3-bg'], ['accent-fg', 'accent'], ['text', 'bg'], ['text', 'surface'],
-          ['muted', 'bg'], ['muted', 'surface'],
+          ['muted', 'bg'], ['muted', 'surface'], ['danger', 'surface'],
         ];
         for (const [fg, bg] of pairs) {
           expect(contrast(c[fg], c[bg]), `${fg} sobre ${bg}: ${c[fg]} / ${c[bg]}`).toBeGreaterThanOrEqual(4.5);
@@ -63,11 +65,30 @@ describe('paletas', () => {
   }
 });
 
+describe('las paletas se distinguen entre sí', () => {
+  it('cada una tiene su propio fondo y su propio color de trabajo', () => {
+    for (const mode of ['light', 'dark']) {
+      const bgs = PALETTES.map((p) => p[mode].bg);
+      const works = PALETTES.map((p) => p[mode]['work-bg']);
+      expect(new Set(bgs).size, `fondos ${mode}`).toBe(PALETTES.length);
+      expect(new Set(works).size, `trabajo ${mode}`).toBe(PALETTES.length);
+    }
+  });
+
+  it('el anillo de foco se ve sobre el fondo (3:1)', () => {
+    for (const p of PALETTES) {
+      for (const mode of ['light', 'dark']) {
+        expect(contrast(p[mode].focus, p[mode].surface), `${p.id}/${mode}`).toBeGreaterThanOrEqual(3);
+      }
+    }
+  });
+});
+
 describe('ajustes y tema', () => {
   it('normaliza datos dañados o viejos', () => {
     expect(normalizeSettings(null)).toEqual({ ...DEFAULT_SETTINGS, colors: {} });
     expect(normalizeSettings({ theme: 'morado', palette: 'nope', colors: { work: 'rojo', rest: '#ABCDEF', foo: '#000' } }))
-      .toEqual({ theme: 'auto', palette: 'clasico', colors: { rest: '#abcdef' } });
+      .toEqual({ theme: 'auto', palette: 'pizarron', colors: { rest: '#abcdef' } });
   });
 
   it('color propio: el texto se calcula con buen contraste', () => {
@@ -80,10 +101,10 @@ describe('ajustes y tema', () => {
   });
 
   it('la hoja respeta modo automático y forzado', () => {
-    const css = buildThemeCSS(normalizeSettings({ palette: 'oceano' }));
+    const css = buildThemeCSS(normalizeSettings({ palette: 'vino' }));
     expect(css).toContain('html:root {');
     expect(css).toContain('@media (prefers-color-scheme: dark)');
     expect(css).toContain('html:root[data-theme="dark"]');
-    expect(css).toContain('--work-bg: #cfe3fb');
+    expect(css).toContain('--work-bg: #7a1f3d');
   });
 });

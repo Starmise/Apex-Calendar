@@ -39,7 +39,7 @@ src/app/pwa.js           registro del SW (solo en build), "versión nueva · Act
 src/app/notifier.js      revisa cada 20 s dueReminders(); notificación del sistema + aviso en la app
 src/pwa/sw.js            plantilla del SW; el plugin pwaPrecache de vite.config.js inserta la lista de archivos y la versión de caché
 public/                  manifest.webmanifest, íconos 192/512/maskable, apple-touch-icon
-src/data/                default-schedule.json, holidays-mx.js, palettes.js (tests/colors.test.js verifica contraste AA)
+src/data/                default-schedule.json, holidays-mx.js, palettes.js (cada paleta = juego completo de colores, incluidos fondo y texto; tests/colors.test.js verifica contraste AA y que sean distintas)
 src/app/router.js        rutas por hash (puro, probado): parseRoute, routeHash, shiftRoute
 src/views/               DOM puro, sin framework: common, month, week, day, search, settings, reminders, data
 src/main.js              arranque, render por ruta, teclado: #/mes/AAAA-MM, #/semana/AAAA-MM-DD, #/dia/AAAA-MM-DD
@@ -70,6 +70,7 @@ Principios: `core/` no toca DOM ni localStorage. Sin framework. Vite 8 + Vitest 
 - [x] **v0.4.0** — personalización (`#/ajustes`): modo claro/oscuro/auto, 5 paletas (`src/data/palettes.js`), colores propios con texto calculado, contraste probado.
 - [x] **v0.5.0** — recordatorios (`#/recordatorios`, `apex.reminders`) con repetición semana/14 días/mes/año; exportar/importar/borrar en Ajustes → Tus datos.
 - [x] **v1.0.0** — PWA instalable y offline (SW propio en `src/pwa/sw.js`), avisos de recordatorios con la app abierta, accesibilidad revisada con axe-core (WCAG 2.2 AA, 0 incidencias).
+- [x] **v1.1.0** — paletas rediseñadas y distintas entre sí (Pizarrón por defecto, Vino y menta, Cítrico, Lavanda, Alto contraste); README para usuarios sin experiencia técnica.
 - [ ] Después — excepciones por fecha (vacaciones, permisos) en `apex.overrides`; editor de ciclo.
 
 Claves de localStorage: `apex.version` (DATA_VERSION de `src/store/storage.js`), `apex.settings`, `apex.reminders`; prevista `apex.overrides`. Al cambiar la forma de algo guardado: subir DATA_VERSION y agregar la migración en `MIGRATIONS`.
@@ -77,6 +78,8 @@ Claves de localStorage: `apex.version` (DATA_VERSION de `src/store/storage.js`),
 Accesibilidad: cada cambio de UI debe pasar axe-core sin incidencias (las pruebas manuales se hicieron con Playwright + axe en todas las vistas, paletas, modos claro/oscuro, 1100 px y 390 px). Los días del mes y la semana llevan su nombre accesible en un `span.visually-hidden` y lo visual va con `aria-hidden` (no usar `aria-label`, rompe "label in name"). Toda paleta nueva debe pasar `tests/colors.test.js`.
 
 ## Notas para sesiones de Claude
+
+- Estética: el dueño rechazó la paleta original (fondo crema + naranja/verde pastel) por verse "hecha con IA". Evitar fondos crema, pasteles genéricos y acentos por defecto; cada paleta debe tener identidad propia.
 
 - Avisos de recordatorios: solo con la app abierta (no hay servidor push). No prometer avisos con todo cerrado.
 - El rol actual nunca tiene sábado y domingo libres seguidos; `nextFreeWeekend` devuelve null y la UI lo explica.

@@ -41,7 +41,7 @@ export function reminderForm({ initial = null, date, compact = false, showNotify
   text.required = true;
   text.maxLength = MAX_TEXT;
   text.autocomplete = 'off';
-  text.placeholder = 'Ej. Llevar uniforme limpio';
+  text.placeholder = 'Ej. Hoy nos traen comida a la oficina';
   text.value = initial?.text ?? '';
 
   const dateInput = el('input');
