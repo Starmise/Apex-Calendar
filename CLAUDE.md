@@ -56,6 +56,8 @@ Principios: `core/` no toca DOM ni localStorage. Sin framework. Vite 8 + Vitest 
 
 ## Flujo de trabajo
 
+> **Regla del dueño — nunca hacer push sin permiso.** Claude puede hacer commits locales, pero antes de cualquier `git push` (ramas, tags o `--force`) y antes de abrir, actualizar o hacer merge de un pull request debe detenerse y pedir aprobación explícita en el chat. Al pedirla, mostrar: rama de destino, lista de commits (`git log --oneline origin/<rama>..HEAD`) y resumen de archivos cambiados. Solo un "sí" claro del dueño para ese push cuenta; una aprobación anterior no sirve para el siguiente.
+
 - `main` = producción; cada push publica. Cambios grandes en ramas `feature/*` o `fix/*` + pull request.
 - Al cerrar una versión: subir `version` en `package.json`, entrada en `CHANGELOG.md`, tag `vX.Y.Z`, actualizar el roadmap de abajo.
 - Correr `npm test` antes de cada commit.
