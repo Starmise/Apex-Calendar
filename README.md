@@ -1,63 +1,103 @@
 # Apex Calendar
 
-Calendario de trabajo en la web: muestra qué días se trabaja y cuáles se descansa según un rol fijo de 14 días, con domingos trabajados a paga x2 y festivos oficiales trabajados a paga x3.
+Tu calendario de trabajo en el celular o la computadora. De un vistazo sabes **qué días trabajas, qué días descansas y cuándo te pagan doble o triple**.
 
-- Vistas de **mes, semana y día**, cada una con su propia dirección (`#/mes/2026-10`, `#/semana/2026-10-04`, `#/dia/2026-10-07`).
-- **Buscador**: ¿se trabaja tal día? Con horario, paga, próximo descanso, próximo festivo y fin de semana libre.
-- **Recordatorios** con repetición (semana, 14 días, mes, año) y aviso a la hora indicada mientras la app está abierta.
-- **Personalización**: modo claro/oscuro/automático, 5 paletas y colores propios.
-- **Instalable y sin conexión** (PWA), usable solo con teclado y con lector de pantalla.
+### 👉 Ábrelo aquí: **[starmise.github.io/Apex-Calendar](https://starmise.github.io/Apex-Calendar/)**
 
-Todo lo personal se guarda **solo en el navegador** de cada persona (no hay servidor ni cuentas). Desde Ajustes → Tus datos se puede exportar un respaldo `.json` e importarlo en otro dispositivo.
+No necesitas crear cuenta, ni contraseña, ni descargar nada de la tienda de apps. Es gratis.
 
-**Sitio:** https://starmise.github.io/Apex-Calendar/
+---
 
-## Cómo funciona el rol
+## Cómo leer el calendario
 
-El ciclo se repite cada dos semanas a partir del domingo 2 de agosto de 2026:
+| Lo que ves | Qué significa |
+| --- | --- |
+| 🟧 Día de color **naranja** | Trabajas. Abajo del número viene tu horario, por ejemplo **8–20** (de 8 de la mañana a 8 de la noche). |
+| 🟩 Día de color **verde** | Descansas. |
+| Etiqueta **x2** | Es domingo y trabajas: **paga doble**. |
+| Etiqueta **x3** | Es día festivo y trabajas: **paga triple**. |
+| El día con **marco** | Es hoy. |
+| Un **puntito** abajo del día | Tienes un recordatorio ese día. |
 
-| Semana | Dom | Lun | Mar | Mié | Jue | Vie | Sáb |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| A | Descanso | Descanso | 8–20 | 8–20 | 8–20 | 8–20 | Descanso |
-| B | 8–21 | 8–21 | Descanso | Descanso | Descanso | Descanso | 8–21 |
+Toca cualquier día para ver todos sus detalles.
 
-- **Festivo trabajado:** paga x3 (también si cae en domingo).
-- **Domingo trabajado:** paga x2.
-- **Festivo o domingo en descanso:** se marca, sin paga.
+> Los colores pueden ser otros si los cambiaste en **Ajustes**.
 
-Festivos: Ley Federal del Trabajo art. 74 + jornadas electorales federales y de Querétaro.
+---
 
-## Desarrollo
+## Qué puedes hacer
 
-Requiere Node.js 22 o más reciente.
+Arriba hay unos botones para moverte por la app:
 
-```bash
-npm install      # una vez
-npm run dev      # servidor local con recarga
-npm test         # pruebas del motor del ciclo y festivos
-npm run build    # genera dist/
-```
+- **Mes** — todo el mes de una vez. Usa las flechas **←** y **→** para ir al mes anterior o al siguiente, y **Hoy** para regresar al mes actual.
+- **Semana** — los 7 días de la semana, con tu horario y tus horas.
+- **Día** — todo sobre un solo día: horario, horas, paga y cuándo es tu próximo descanso.
+- **Buscar** — elige cualquier fecha y te dice si ese día trabajas o descansas. Útil para planear una cita, una fiesta o un viaje.
+- **Recordatorios** — apunta cosas que no quieres olvidar ("llevar uniforme", "pagar la renta"). Pueden repetirse cada semana, cada mes, etc.
+- **Ajustes** — cambia los colores, activa el modo oscuro, haz un respaldo de tus recordatorios y más.
 
-## Estructura
+---
 
-```
-src/core/     lógica pura y probada (ciclo, festivos, búsquedas, recordatorios, colores, ajustes)
-src/data/     rol de 14 días, festivos, paletas
-src/store/    localStorage con prefijo apex. y migraciones
-src/app/      router, tema, avisos, PWA, notificaciones
-src/views/    pantallas (DOM puro, sin framework)
-src/pwa/sw.js plantilla del service worker (vite.config.js la completa al compilar)
-public/       manifiesto e íconos
-```
+## Ponerlo en tu pantalla de inicio (como una app)
 
-## Publicación
+Así lo abres con un solo toque, como cualquier otra app, y **funciona aunque no tengas internet**.
 
-Cada push a `main` corre las pruebas y publica el sitio con GitHub Actions (`.github/workflows/deploy.yml`).
+**En Android (Chrome):**
+1. Abre el enlace de arriba en Chrome.
+2. Toca los **tres puntitos ⋮** de la esquina de arriba.
+3. Toca **"Instalar app"** o **"Agregar a la pantalla principal"**.
 
-Configuración única en GitHub: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+**En iPhone (Safari):**
+1. Abre el enlace de arriba en **Safari** (no funciona desde otras apps).
+2. Toca el botón **Compartir** (el cuadrito con una flecha hacia arriba).
+3. Baja y toca **"Agregar a inicio"**.
 
-Después de publicar, quien ya tenga la app abierta verá "Hay una versión nueva · Actualizar".
+**En la computadora (Chrome o Edge):** busca el ícono de instalar en la barra de la dirección, o entra a **Ajustes → Aplicación → Instalar**.
 
-## Versiones
+---
 
-Versionado semántico. Los cambios de cada versión están en [CHANGELOG.md](CHANGELOG.md).
+## Recordatorios y avisos
+
+1. Entra a **Recordatorios** (o toca un día y baja hasta "Recordatorios").
+2. Escribe qué quieres recordar, elige la fecha y, si quieres, una hora.
+3. Si quieres que te avise, marca **"Avisarme a esa hora"** y acepta cuando el teléfono te pida permiso.
+
+⚠️ **Importante:** el aviso solo llega si la app está **abierta** (aunque sea en segundo plano). Si la cerraste por completo, no te puede avisar. En iPhone, los avisos solo funcionan si la agregaste a tu pantalla de inicio.
+
+---
+
+## Tus datos son solo tuyos
+
+Tus recordatorios y tus colores se guardan **únicamente en tu teléfono o computadora**. Nadie más los ve: ni tus compañeros, ni tu jefe, ni quien hizo la app.
+
+Por lo mismo, **si borras los datos del navegador o cambias de celular, se pierden**. Para no perderlos:
+
+1. Entra a **Ajustes → Tus datos**.
+2. Toca **"Exportar respaldo"**. Se descarga un archivo; guárdalo o mándatelo por correo o WhatsApp.
+3. En el celular nuevo, entra a **Ajustes → Tus datos → Elegir archivo…** y escoge ese archivo.
+
+---
+
+## Preguntas frecuentes
+
+**¿Necesito internet?**
+Solo la primera vez que lo abres. Después funciona sin conexión.
+
+**¿Los festivos son días libres?**
+No. Si te toca trabajar en festivo, trabajas y se marca con **x3** (paga triple). Si cae en tu día de descanso, se marca pero no hay paga extra.
+
+**¿Cuándo tengo un fin de semana completo libre?**
+Con el rol actual nunca coinciden sábado y domingo libres juntos. En **Buscar** o en la vista **Día** te dice cuál es tu próximo sábado libre y tu próximo domingo libre.
+
+**No me llegó el aviso de un recordatorio.**
+Revisa que la app estuviera abierta a esa hora, que el recordatorio tenga hora y la casilla **"Avisarme"** marcada, y que hayas dado permiso. Puedes revisarlo en **Ajustes → Avisos de recordatorios → Probar un aviso**.
+
+**Me salió "Hay una versión nueva · Actualizar".**
+Toca **Actualizar**. Tus recordatorios no se borran.
+
+**Creo que un día está mal en el calendario.**
+Avísale a quien te compartió la app para que lo revise.
+
+---
+
+<sub>¿Mantienes este proyecto? La información técnica está en [DESARROLLO.md](DESARROLLO.md) y los cambios de cada versión en [CHANGELOG.md](CHANGELOG.md).</sub>
