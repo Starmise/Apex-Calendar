@@ -2,7 +2,18 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); versionado semántico.
 
-## [0.4.0] - 2026-10-07
+## [0.5.0] - 2026-10-07
+
+### Agregado
+- Recordatorios (`#/recordatorios`) con texto, fecha, hora opcional y repetición: una vez, cada semana, cada 14 días (como el rol), cada mes o cada año.
+- Lista de los próximos 60 días y de todos los recordatorios, con editar y borrar (con "Deshacer").
+- Panel de recordatorios en la vista día para agregar rápido; marcas en el mes y lista en la semana.
+- Ajustes → Tus datos: exportar un respaldo `.json`, importarlo (combinar o reemplazar) y borrar todos los datos.
+- Los recordatorios se guardan en `apex.reminders`; los datos importados o dañados se validan antes de usarse.
+- Avisos en pantalla accesibles (región `aria-live`).
+- Si cambias datos en otra pestaña, esta se actualiza sola.
+
+ - 2026-10-07
 
 ### Agregado
 - Pantalla de ajustes (`#/ajustes`).

@@ -31,11 +31,13 @@ src/core/schedule.js     getDayInfo(iso) → { type, start, end, hours, holiday,
 src/core/search.js       findNext, nextRest, nextWork, nextFreeWeekend, nextHoliday, streak (límite 2 años)
 src/core/colors.js       contraste WCAG, readableText(bg) para colores propios
 src/core/settings.js     normalizeSettings: valida apex.settings (theme, palette, colors)
+src/core/reminders.js    { id, date, time|null, text, repeat, notify }; occursOn, upcoming, respaldo (buildBackup/parseBackup)
 src/store/storage.js     createStore(): apex.* en localStorage, migraciones (DATA_VERSION), memoria si falla
 src/app/theme.js         buildThemeCSS/applyTheme: inyecta la paleta como <style id="apex-theme">
+src/app/toast.js         avisos con aria-live (uno a la vez, con acción opcional)
 src/data/                default-schedule.json, holidays-mx.js, palettes.js (tests/colors.test.js verifica contraste AA)
 src/app/router.js        rutas por hash (puro, probado): parseRoute, routeHash, shiftRoute
-src/views/               DOM puro, sin framework: common, month, week, day, search, settings
+src/views/               DOM puro, sin framework: common, month, week, day, search, settings, reminders, data
 src/main.js              arranque, render por ruta, teclado: #/mes/AAAA-MM, #/semana/AAAA-MM-DD, #/dia/AAAA-MM-DD
 src/styles/themes.css    neutros + valores por defecto; modo: sin atributo = sistema, html[data-theme=light|dark] = forzado
 tests/                   Vitest
@@ -60,7 +62,7 @@ Principios: `core/` no toca DOM ni localStorage. Sin framework. Vite 8 + Vitest 
 - [x] **v0.2.0** — vistas semana y día, URLs por fecha (`#/semana/…`, `#/dia/…`), navegación con teclado.
 - [x] **v0.3.0** — buscador por fecha (`#/buscar/…`): trabajo/descanso, festivo, paga, próximo descanso, próximo fin de semana libre. Nota: el rol actual nunca tiene sábado y domingo libres seguidos; el buscador lo dice y ofrece el siguiente sábado y domingo libres por separado.
 - [x] **v0.4.0** — personalización (`#/ajustes`): modo claro/oscuro/auto, 5 paletas (`src/data/palettes.js`), colores propios con texto calculado, contraste probado.
-- [ ] **v0.5** — recordatorios en localStorage (`apex.reminders`), exportar/importar JSON.
+- [x] **v0.5.0** — recordatorios (`#/recordatorios`, `apex.reminders`) con repetición semana/14 días/mes/año; exportar/importar/borrar en Ajustes → Tus datos.
 - [ ] **v1.0** — PWA instalable y offline, notificaciones (solo con la app abierta), accesibilidad.
 - [ ] Después — excepciones por fecha (vacaciones, permisos) en `apex.overrides`; editor de ciclo.
 

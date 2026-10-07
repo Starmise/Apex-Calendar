@@ -4,6 +4,7 @@
 //   #/semana/2026-08-02    vista semana (se normaliza al domingo)
 //   #/dia/2026-08-04       vista día
 //   #/buscar/2026-12-25    buscador (la fecha es opcional)
+//   #/recordatorios        recordatorios (fecha opcional para el formulario)
 //   #/ajustes              apariencia y datos
 //
 // Cualquier ruta desconocida o fecha inválida cae en el mes de hoy.
@@ -14,7 +15,9 @@ import { addDays, addMonths, isValidISO, startOfMonth, startOfWeek } from '../co
 export const CALENDAR_VIEWS = ['mes', 'semana', 'dia'];
 
 /** Otras pantallas. La fecha es opcional y solo la usa el buscador. */
-export const PAGE_VIEWS = ['buscar', 'ajustes'];
+export const PAGE_VIEWS = ['buscar', 'recordatorios', 'ajustes'];
+/** Pantallas que aceptan una fecha opcional en la URL. */
+const DATED_PAGES = ['buscar', 'recordatorios'];
 
 /** Fecha canónica de cada vista (mes → día 1, semana → domingo). */
 function normalize(view, iso) {
@@ -35,7 +38,7 @@ export function parseRoute(hash, today) {
   const [, view, param] = m;
 
   if (PAGE_VIEWS.includes(view)) {
-    return { view, date: param && isValidISO(param) ? param : null };
+    return { view, date: DATED_PAGES.includes(view) && param && isValidISO(param) ? param : null };
   }
   if (!CALENDAR_VIEWS.includes(view)) return fallback;
 

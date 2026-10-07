@@ -1,4 +1,5 @@
-// Arranque de la app y router por hash: #/mes/2026-08, #/semana/2026-08-02, #/dia/2026-08-04, #/buscar
+// Arranque de la app y router por hash:
+//   #/mes/2026-08 · #/semana/2026-08-02 · #/dia/2026-08-04 · #/buscar · #/recordatorios · #/ajustes
 import './styles/themes.css';
 import './styles/base.css';
 import { renderMonth } from './views/month.js';
@@ -6,9 +7,15 @@ import { renderWeek } from './views/week.js';
 import { renderDay } from './views/day.js';
 import { renderSearch, upcomingPanel } from './views/search.js';
 import { renderSettings } from './views/settings.js';
+import { renderReminders, dayRemindersPanel } from './views/reminders.js';
+import { dataSection } from './views/data.js';
 import { createStore } from './store/storage.js';
-import { normalizeSettings } from './core/settings.js';
+import { normalizeSettings, DEFAULT_SETTINGS } from './core/settings.js';
+import {
+  backupFileName, buildBackup, mergeReminders, normalizeReminder, normalizeReminders, parseBackup, remindersOn,
+} from './core/reminders.js';
 import { applyTheme } from './app/theme.js';
+import { showToast } from './app/toast.js';
 import { addDays, todayISO } from './core/dates.js';
 import { CALENDAR_VIEWS, focusDate, parseRoute, routeFor, routeHash, shiftRoute } from './app/router.js';
 
@@ -20,29 +27,127 @@ const todayBtn = document.getElementById('today');
 const tabs = [...document.querySelectorAll('.tabs a[data-view]')];
 document.getElementById('version').textContent = `v${__APP_VERSION__}`;
 
+// ——— Datos del usuario ———
+
 const store = createStore();
 let settings = normalizeSettings(store.get('settings'));
+let reminders = normalizeReminders(store.get('reminders', []));
 applyTheme(settings);
 // En modo automático, la barra del navegador sigue al sistema.
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => applyTheme(settings));
 
+function save(key, value) {
+  if (!store.set(key, value)) {
+    showToast('No se pudo guardar en este navegador (¿almacenamiento lleno o bloqueado?).', { tone: 'alert' });
+  }
+}
+
 /** Cambia ajustes, los guarda y los aplica. */
 function updateSettings(patch, { rerender = true } = {}) {
   settings = normalizeSettings({ ...settings, ...patch });
-  store.set('settings', settings);
+  save('settings', settings);
   applyTheme(settings);
   if (rerender) renderKeepingFocus();
 }
 
-/** Vuelve a dibujar la vista sin perder el control que tenía el foco. */
-function renderKeepingFocus() {
-  const active = document.activeElement;
-  const id = active?.id;
-  const key = active?.name && active.type === 'radio' ? `input[name="${active.name}"]:checked` : null;
-  render();
-  const target = (id && document.getElementById(id)) || (key && view.querySelector(key));
-  target?.focus();
+function setReminders(list) {
+  reminders = list;
+  save('reminders', reminders);
 }
+
+/** Recordatorio que se está editando en #/recordatorios. */
+let editId = null;
+
+function saveReminder(data) {
+  const r = normalizeReminder(data);
+  if (!r) return;
+  const exists = reminders.some((x) => x.id === r.id);
+  setReminders(exists ? reminders.map((x) => (x.id === r.id ? r : x)) : [...reminders, r]);
+  editId = null;
+  showToast(exists ? 'Cambios guardados.' : `Recordatorio agregado: ${r.text}`);
+  if (exists) pendingSelector = '#reminder-form-title';
+  renderKeepingFocus();
+}
+
+function deleteReminder(id) {
+  const index = reminders.findIndex((r) => r.id === id);
+  if (index < 0) return;
+  const removed = reminders[index];
+  setReminders(reminders.filter((r) => r.id !== id));
+  if (editId === id) editId = null;
+  pendingSelector = '.view-title';
+  render();
+  showToast(`Recordatorio borrado: ${removed.text}`, {
+    action: {
+      label: 'Deshacer',
+      onClick: () => {
+        const list = [...reminders];
+        list.splice(index, 0, removed);
+        setReminders(list);
+        render();
+      },
+    },
+  });
+}
+
+function editReminder(id) {
+  editId = id;
+  if (id == null) {
+    pendingSelector = '#reminder-form-title';
+    render();
+    return;
+  }
+  pendingSelector = '#edit-rem-text';
+  go({ view: 'recordatorios', date: null });
+}
+
+function exportData() {
+  const backup = buildBackup({ settings, reminders });
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = backupFileName(todayISO());
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast('Respaldo descargado.');
+}
+
+async function importData(file, mode) {
+  try {
+    const data = parseBackup(await file.text());
+    if (mode === 'replace') {
+      setReminders(data.reminders);
+      if (data.settings) updateSettings(data.settings, { rerender: false });
+    } else {
+      setReminders(mergeReminders(reminders, data.reminders));
+    }
+    const skipped = data.skipped ? ` (${data.skipped} no se pudieron leer)` : '';
+    const what = mode === 'replace' ? 'Datos reemplazados' : 'Respaldo combinado';
+    showToast(`${what}: ${data.reminders.length} recordatorios${skipped}.`);
+    renderKeepingFocus();
+  } catch (err) {
+    showToast(`No se pudo importar: ${err.message}`, { tone: 'alert', timeout: 10000 });
+  }
+}
+
+function clearData() {
+  const ok = confirm(
+    '¿Borrar tus ajustes y todos tus recordatorios de este navegador? No se puede deshacer. Exporta un respaldo antes si lo necesitas.',
+  );
+  if (!ok) return;
+  store.remove('settings');
+  store.remove('reminders');
+  settings = normalizeSettings(DEFAULT_SETTINGS);
+  reminders = [];
+  applyTheme(settings);
+  showToast('Se borraron tus datos de este navegador.');
+  renderKeepingFocus();
+}
+
+// ——— Navegación y render ———
 
 const PERIOD = {
   mes: ['Mes anterior', 'Mes siguiente'],
@@ -68,9 +173,24 @@ function go(route, { focusDay = null } = {}) {
   else location.hash = hash;
 }
 
+/** Vuelve a dibujar la vista sin perder el control que tenía el foco. */
+function renderKeepingFocus() {
+  const active = document.activeElement;
+  const id = active && active !== document.body ? active.id : null;
+  const radio = active?.type === 'radio' && active.name ? `input[name="${active.name}"]:checked` : null;
+  const hadSelector = pendingSelector;
+  render();
+  if (hadSelector) return;
+  const target = (id && document.getElementById(id)) || (radio && view.querySelector(radio));
+  target?.focus();
+}
+
+const reminderCount = (iso) => remindersOn(reminders, iso).length;
+
 function render() {
   const t = today();
   const route = current();
+  if (route.view !== 'recordatorios') editId = null;
 
   // Hash canónico (p. ej. #/semana/2026-08-05 → #/semana/2026-08-02) sin crear historial.
   const canonical = routeHash(route);
@@ -78,20 +198,43 @@ function render() {
 
   const focus = pendingFocus ?? (route.date ? focusDate(route, t) : t);
   const opts = { date: route.date, today: t, focus };
-  if (route.view === 'mes') renderMonth(view, opts);
-  if (route.view === 'semana') renderWeek(view, opts);
-  if (route.view === 'dia') renderDay(view, { ...opts, extras: (iso) => [upcomingPanel(iso, t)] });
-  if (route.view === 'ajustes') {
-    renderSettings(view, { settings, onChange: updateSettings, persistent: store.persistent });
-  }
-  if (route.view === 'buscar') {
-    renderSearch(view, {
-      ...opts,
-      onSearch: (iso) => {
-        pendingSelector = '#search-result-title';
-        go({ view: 'buscar', date: iso });
-      },
-    });
+  const reminderHandlers = { onSave: saveReminder, onDelete: deleteReminder, onEdit: editReminder };
+
+  switch (route.view) {
+    case 'mes':
+      renderMonth(view, { ...opts, reminders: reminderCount });
+      break;
+    case 'semana':
+      renderWeek(view, { ...opts, reminders: (iso) => remindersOn(reminders, iso) });
+      break;
+    case 'dia':
+      renderDay(view, {
+        ...opts,
+        extras: (iso) => [dayRemindersPanel(iso, { reminders, ...reminderHandlers }), upcomingPanel(iso, t)],
+      });
+      break;
+    case 'buscar':
+      renderSearch(view, {
+        ...opts,
+        onSearch: (iso) => {
+          pendingSelector = '#search-result-title';
+          go({ view: 'buscar', date: iso });
+        },
+      });
+      break;
+    case 'recordatorios':
+      renderReminders(view, { ...opts, reminders, editId, ...reminderHandlers });
+      break;
+    case 'ajustes':
+      renderSettings(view, {
+        settings,
+        onChange: updateSettings,
+        persistent: store.persistent,
+        sections: [
+          dataSection({ reminderCount: reminders.length, onExport: exportData, onImport: importData, onClear: clearData }),
+        ],
+      });
+      break;
   }
 
   // Pestañas: conservan la fecha que se está viendo.
@@ -160,7 +303,7 @@ view.addEventListener('keydown', (e) => {
 // Fuera de la cuadrícula, ← y → cambian de periodo.
 document.addEventListener('keydown', (e) => {
   if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
-  if (e.target.closest('input, textarea, select, button, [contenteditable], [data-date], dialog')) return;
+  if (e.target.closest?.('input, textarea, select, button, a, label, [contenteditable], [data-date], dialog')) return;
   if (!CALENDAR_VIEWS.includes(current().view)) return;
   if (e.key === 'ArrowLeft') go(shiftRoute(current(), -1));
   if (e.key === 'ArrowRight') go(shiftRoute(current(), 1));
@@ -169,6 +312,15 @@ document.addEventListener('keydown', (e) => {
 window.addEventListener('hashchange', () => {
   moveFocus = true;
   render();
+});
+
+// Si otra pestaña cambia los datos, esta se actualiza.
+window.addEventListener('storage', (e) => {
+  if (!e.key?.startsWith('apex.')) return;
+  settings = normalizeSettings(store.get('settings'));
+  reminders = normalizeReminders(store.get('reminders', []));
+  applyTheme(settings);
+  renderKeepingFocus();
 });
 
 render();

@@ -731,6 +731,208 @@ button.small {
   gap: 8px;
 }
 
+/* Formularios */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+  min-width: 0;
+}
+
+.field label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.field input:not([type='checkbox']),
+.field select {
+  width: 100%;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0 12px;
+}
+
+.field-hint {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+[aria-invalid='true'] {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 1px var(--danger);
+}
+
+.form-error {
+  margin: 0 0 10px;
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.reminder-form.compact {
+  display: grid;
+  grid-template-columns: 1fr 150px auto;
+  align-items: end;
+  gap: 0 10px;
+  margin-top: 12px;
+}
+
+.reminder-form.compact .field-row {
+  display: contents;
+}
+
+.reminder-form.compact .form-actions {
+  margin: 0 0 10px;
+}
+
+.reminder-form.compact .choice,
+.reminder-form.compact .form-error {
+  grid-column: 1 / -1;
+}
+
+/* Recordatorios */
+.reminder-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.reminder-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.reminder-item:first-child {
+  border-top: 0;
+}
+
+.reminder-item.past {
+  opacity: 0.65;
+}
+
+.reminder-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.reminder-when {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.reminder-text {
+  overflow-wrap: anywhere;
+}
+
+.reminder-meta,
+.reminder-day {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.reminder-day {
+  color: var(--accent);
+}
+
+.reminder-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.empty-note {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* Tus datos */
+.import-box {
+  margin: 16px 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.import-title {
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+
+.import-modes {
+  margin-bottom: 8px;
+}
+
+.danger-zone {
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+/* Avisos */
+.toasts {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(560px, calc(100% - 32px));
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 10px 10px 16px;
+  border-radius: 10px;
+  background: var(--text);
+  color: var(--bg);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+}
+
+.toast span {
+  flex: 1;
+}
+
+.toast.alert {
+  background: var(--danger);
+  color: #ffffff;
+}
+
+.toast button {
+  min-height: 34px;
+  background: transparent;
+  color: inherit;
+  border-color: currentColor;
+  font-weight: 600;
+}
+
+.toast .toast-close {
+  border: 0;
+  min-width: 34px;
+  padding: 0;
+  font-size: 1.3rem;
+}
+
 /* Pie */
 .app-footer {
   width: 100%;
@@ -780,6 +982,29 @@ button.small {
 }
 
 @media (max-width: 600px) {
+  .reminder-form.compact {
+    grid-template-columns: 1fr auto;
+  }
+
+  .reminder-form.compact .field:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .reminder-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tabs {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .tabs a {
+    padding: 0 8px;
+    font-size: 0.85rem;
+  }
+
   .upcoming-list,
   .day-facts {
     grid-template-columns: 1fr;
