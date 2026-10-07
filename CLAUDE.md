@@ -79,5 +79,5 @@ Accesibilidad: cada cambio de UI debe pasar axe-core sin incidencias (las prueba
 - Avisos de recordatorios: solo con la app abierta (no hay servidor push). No prometer avisos con todo cerrado.
 - El rol actual nunca tiene sábado y domingo libres seguidos; `nextFreeWeekend` devuelve null y la UI lo explica.
 
-- La sesión en la nube de claude.ai no puede hacer push a GitHub (cuenta de GitHub no vinculada). Claude hace commit en la carpeta local y el dueño hace push desde VS Code, o se vincula GitHub en claude.ai.
+- GitHub ya está vinculado en claude.ai (app de Claude instalada en Apex-Calendar): Claude puede subir ramas y abrir PR (con `gh api` REST; GraphQL no está disponible). Subir tags desde la sesión da 403: los tags `vX.Y.Z` los crea el dueño después del merge.
 - `node_modules/` no se sube; en Windows correr `npm install` antes de `npm run dev`.
