@@ -1,0 +1,41 @@
+/* Paleta de colores. Toda la app usa estas variables; la v0.4 permitirá cambiarlas. */
+:root {
+  color-scheme: light dark;
+  --bg: #f7f6f2;
+  --surface: #ffffff;
+  --text: #1d1d1b;
+  --muted: #6b6a64;
+  --line: #dcdbd4;
+  --accent: #1f5fd1;
+
+  --work-bg: #fadfc0;
+  --work-fg: #8a4a06;
+  --rest-bg: #e2efd3;
+  --rest-fg: #3d6b1f;
+
+  --x2-bg: #8a4a06;
+  --x2-fg: #ffffff;
+  --x3-bg: #b42318;
+  --x3-fg: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #151513;
+    --surface: #1e1e1b;
+    --text: #ecebe6;
+    --muted: #a3a29b;
+    --line: #393934;
+    --accent: #7aa7ff;
+
+    --work-bg: #4a3317;
+    --work-fg: #f6c58c;
+    --rest-bg: #26381c;
+    --rest-fg: #a9d58a;
+
+    --x2-bg: #f6c58c;
+    --x2-fg: #2a1a05;
+    --x3-bg: #ff8a7a;
+    --x3-fg: #2b0905;
+  }
+}
