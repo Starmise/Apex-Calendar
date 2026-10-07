@@ -1,28 +1,15 @@
-// Vista mes: cuadrícula domingo–sábado con el tipo de día, horario, paga y festivos.
+// Vista mes: tabla domingo–sábado con el tipo de día, horario, paga y festivos.
+// Cada día es un enlace a su vista día.
 
 import { getDayInfo, shortRange } from '../core/schedule.js';
-import { daysInMonth, fromParts, weekday, MONTHS_ES, WEEKDAYS_SHORT_ES } from '../core/dates.js';
+import { daysInMonth, fromParts, weekday, MONTHS_ES, WEEKDAYS_ES, WEEKDAYS_SHORT_ES } from '../core/dates.js';
+import { el, describe, fmtHours, payBadge } from './common.js';
 
-function el(tag, className, text) {
-  const node = document.createElement(tag);
-  if (className) node.className = className;
-  if (text != null) node.textContent = text;
-  return node;
-}
-
-function describe(info) {
-  const parts = [];
-  parts.push(info.type === 'work' ? `Trabajo ${shortRange(info)}` : 'Descanso');
-  if (info.holiday) parts.push(info.holiday);
-  if (info.pay > 1) parts.push(`paga x${info.pay}`);
-  return parts.join(' · ');
-}
-
-/** Resumen del mes: horas trabajadas y días con paga especial. */
-export function monthSummary(year, month) {
+/** Resumen de un rango de fechas: horas trabajadas y días con paga especial. */
+export function summarize(dates) {
   let hours = 0, workDays = 0, x2 = 0, x3 = 0;
-  for (let d = 1; d <= daysInMonth(year, month); d++) {
-    const info = getDayInfo(fromParts(year, month, d));
+  for (const iso of dates) {
+    const info = getDayInfo(iso);
     if (info.type !== 'work') continue;
     workDays++;
     hours += info.hours;
@@ -32,76 +19,111 @@ export function monthSummary(year, month) {
   return { hours, workDays, x2, x3 };
 }
 
-export function renderMonth(root, { year, month, today }) {
+export function monthDates(year, month) {
+  return Array.from({ length: daysInMonth(year, month) }, (_, i) => fromParts(year, month, i + 1));
+}
+
+/** Resumen del mes (se conserva por compatibilidad con v0.1). */
+export function monthSummary(year, month) {
+  return summarize(monthDates(year, month));
+}
+
+export function summaryText(s) {
+  return (
+    `${s.workDays} ${s.workDays === 1 ? 'día' : 'días'} de trabajo · ${fmtHours(s.hours)} h` +
+    (s.x2 ? ` · ${s.x2} ${s.x2 === 1 ? 'domingo' : 'domingos'} x2` : '') +
+    (s.x3 ? ` · ${s.x3} ${s.x3 === 1 ? 'festivo' : 'festivos'} x3` : '')
+  );
+}
+
+/**
+ * @param {HTMLElement} root
+ * @param {{date: string, today: string, focus?: string, reminders?: (iso: string) => number}} opts
+ *   date = día 1 del mes; focus = día que recibe el foco del teclado.
+ */
+export function renderMonth(root, { date, today, focus, reminders = () => 0 }) {
+  const year = Number(date.slice(0, 4));
+  const month = Number(date.slice(5, 7));
   root.replaceChildren();
 
-  const title = el('h2', 'month-title', `${MONTHS_ES[month - 1]} ${year}`);
-  title.id = 'month-title';
+  const title = el('h2', 'view-title', `${MONTHS_ES[month - 1]} ${year}`);
+  title.id = 'view-title';
+  title.tabIndex = -1;
   root.append(title);
 
-  const grid = el('div', 'month-grid');
-  grid.setAttribute('role', 'grid');
-  grid.setAttribute('aria-labelledby', 'month-title');
+  const table = el('table', 'month-grid');
+  table.setAttribute('aria-labelledby', 'view-title');
+  const thead = el('thead');
+  const headRow = el('tr');
+  WEEKDAYS_SHORT_ES.forEach((name, i) => {
+    const th = el('th', 'weekday');
+    th.scope = 'col';
+    const abbr = el('abbr', null, name);
+    abbr.title = WEEKDAYS_ES[i];
+    th.append(abbr);
+    headRow.append(th);
+  });
+  thead.append(headRow);
+  table.append(thead);
 
-  const head = el('div', 'month-row month-head');
-  head.setAttribute('role', 'row');
-  for (const name of WEEKDAYS_SHORT_ES) {
-    const h = el('div', 'weekday', name);
-    h.setAttribute('role', 'columnheader');
-    head.append(h);
-  }
-  grid.append(head);
-
+  const tbody = el('tbody');
   const total = daysInMonth(year, month);
   const lead = weekday(fromParts(year, month, 1));
   const cells = Math.ceil((lead + total) / 7) * 7;
+  const focusDay = focus && focus.slice(0, 7) === date.slice(0, 7) ? focus : date;
 
   let row;
   for (let i = 0; i < cells; i++) {
     if (i % 7 === 0) {
-      row = el('div', 'month-row');
-      row.setAttribute('role', 'row');
-      grid.append(row);
+      row = el('tr');
+      tbody.append(row);
     }
     const day = i - lead + 1;
+    const td = el('td');
     if (day < 1 || day > total) {
-      const empty = el('div', 'day empty');
-      empty.setAttribute('role', 'gridcell');
-      row.append(empty);
+      td.className = 'empty';
+      row.append(td);
       continue;
     }
 
     const iso = fromParts(year, month, day);
     const info = getDayInfo(iso);
-    const cell = el('div', `day ${info.type}`);
-    cell.setAttribute('role', 'gridcell');
-    cell.dataset.date = iso;
+    const count = reminders(iso);
+    const link = el('a', `day ${info.type}`);
+    link.href = `#/dia/${iso}`;
+    link.dataset.date = iso;
+    // Solo un día entra en el orden de tabulación; las flechas mueven el foco entre días.
+    link.tabIndex = iso === focusDay ? 0 : -1;
     if (iso === today) {
-      cell.classList.add('today');
-      cell.setAttribute('aria-current', 'date');
+      link.classList.add('today');
+      link.setAttribute('aria-current', 'date');
     }
-    if (info.holiday) cell.classList.add('holiday');
-    cell.title = describe(info);
-    cell.setAttribute('aria-label', `${day} de ${MONTHS_ES[month - 1]}: ${describe(info)}`);
+    if (info.holiday) link.classList.add('holiday');
+    const extra = count ? ` · ${count} ${count === 1 ? 'recordatorio' : 'recordatorios'}` : '';
+    link.title = describe(info) + extra;
+    link.setAttribute(
+      'aria-label',
+      `${WEEKDAYS_ES[weekday(iso)]} ${day}: ${describe(info)}${extra}${iso === today ? ' (hoy)' : ''}`,
+    );
 
-    const top = el('div', 'day-top');
+    const top = el('span', 'day-top');
     top.append(el('span', 'day-num', String(day)));
-    if (info.pay > 1) top.append(el('span', `pay pay-x${info.pay}`, `x${info.pay}`));
-    cell.append(top);
+    if (info.pay > 1) top.append(payBadge(info.pay));
+    link.append(top);
 
-    if (info.type === 'work') cell.append(el('span', 'day-range', shortRange(info)));
-    if (info.holiday) cell.append(el('span', 'day-holiday', info.holiday));
+    if (info.type === 'work') link.append(el('span', 'day-range', shortRange(info)));
+    if (info.holiday) link.append(el('span', 'day-holiday', info.holiday));
+    if (count) {
+      const dot = el('span', 'day-reminder', count > 1 ? `● ${count}` : '●');
+      dot.setAttribute('aria-hidden', 'true');
+      link.append(dot);
+    }
 
-    row.append(cell);
+    td.append(link);
+    row.append(td);
   }
-  root.append(grid);
+  table.append(tbody);
+  root.append(table);
 
-  const s = monthSummary(year, month);
-  const summary = el('p', 'month-summary');
-  const fmt = (n) => (Number.isInteger(n) ? String(n) : n.toFixed(1));
-  summary.textContent =
-    `${s.workDays} días de trabajo · ${fmt(s.hours)} h` +
-    (s.x2 ? ` · ${s.x2} ${s.x2 === 1 ? 'domingo' : 'domingos'} x2` : '') +
-    (s.x3 ? ` · ${s.x3} ${s.x3 === 1 ? 'festivo' : 'festivos'} x3` : '');
-  root.append(summary);
+  root.append(el('p', 'view-summary', summaryText(monthSummary(year, month))));
 }

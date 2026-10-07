@@ -63,3 +63,46 @@ export const MONTHS_ES = [
 ];
 
 export const WEEKDAYS_SHORT_ES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+export const WEEKDAYS_ES = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+
+/** ¿Es una fecha real 'YYYY-MM-DD'? (rechaza 2026-02-30, 2026-13-01, etc.) */
+export function isValidISO(iso) {
+  if (typeof iso !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false;
+  return toISO(parseISO(iso)) === iso;
+}
+
+/** Domingo de la semana de esa fecha (las semanas van de domingo a sábado, como el rol). */
+export function startOfWeek(iso) {
+  return addDays(iso, -weekday(iso));
+}
+
+/** Primer día del mes de esa fecha. */
+export function startOfMonth(iso) {
+  return `${iso.slice(0, 8)}01`;
+}
+
+/** Suma meses conservando el día cuando existe (31 ene + 1 mes → 28/29 feb). */
+export function addMonths(iso, n) {
+  const y = Number(iso.slice(0, 4));
+  const m = Number(iso.slice(5, 7));
+  const d = Number(iso.slice(8, 10));
+  const index = y * 12 + (m - 1) + n;
+  const year = Math.floor(index / 12);
+  const month = mod(index, 12) + 1;
+  return fromParts(year, month, Math.min(d, daysInMonth(year, month)));
+}
+
+/** 'miércoles 7 de octubre de 2026' (sin año si `withYear` es false). */
+export function formatLong(iso, { withYear = true } = {}) {
+  const d = Number(iso.slice(8, 10));
+  const m = Number(iso.slice(5, 7));
+  const base = `${WEEKDAYS_ES[weekday(iso)]} ${d} de ${MONTHS_ES[m - 1].toLowerCase()}`;
+  return withYear ? `${base} de ${iso.slice(0, 4)}` : base;
+}
+
+/** '7 oct' — formato corto para listas. */
+export function formatShort(iso) {
+  const m = Number(iso.slice(5, 7));
+  return `${Number(iso.slice(8, 10))} ${MONTHS_ES[m - 1].slice(0, 3).toLowerCase()}`;
+}

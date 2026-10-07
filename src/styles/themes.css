@@ -7,6 +7,9 @@
   --muted: #6b6a64;
   --line: #dcdbd4;
   --accent: #1f5fd1;
+  --accent-fg: #ffffff;
+  --focus: #1f5fd1;
+  --danger: #b42318;
 
   --work-bg: #fadfc0;
   --work-fg: #8a4a06;
@@ -27,6 +30,9 @@
     --muted: #a3a29b;
     --line: #393934;
     --accent: #7aa7ff;
+    --accent-fg: #0b1a33;
+    --focus: #7aa7ff;
+    --danger: #ff8a7a;
 
     --work-bg: #4a3317;
     --work-fg: #f6c58c;

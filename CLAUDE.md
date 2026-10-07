@@ -29,8 +29,9 @@ Sitio web estático (GitHub Pages, costo cero) donde los empleados consultan su 
 src/core/dates.js        fechas 'YYYY-MM-DD', aritmética en UTC (nunca usar fechas locales para el ciclo)
 src/core/schedule.js     getDayInfo(iso) → { type, start, end, hours, holiday, isSunday, pay, cycleIndex }
 src/data/                default-schedule.json, holidays-mx.js
-src/views/month.js       vista mes (DOM puro, sin framework)
-src/main.js              router por hash: #/mes/AAAA-MM
+src/app/router.js        rutas por hash (puro, probado): parseRoute, routeHash, shiftRoute
+src/views/               DOM puro, sin framework: common, month, week, day
+src/main.js              arranque, render por ruta, teclado: #/mes/AAAA-MM, #/semana/AAAA-MM-DD, #/dia/AAAA-MM-DD
 src/styles/themes.css    TODOS los colores como variables CSS (claro + oscuro)
 tests/                   Vitest
 .github/workflows/deploy.yml  test + build en push/PR; publica en Pages solo desde main
@@ -51,7 +52,7 @@ Principios: `core/` no toca DOM ni localStorage. Sin framework. Vite 8 + Vitest 
 ## Roadmap
 
 - [x] **v0.1.0** — motor del ciclo y festivos con pruebas, vista mes con paga x2/x3, despliegue automático.
-- [ ] **v0.2** — vistas semana y día, URLs por fecha (`#/semana/…`, `#/dia/…`).
+- [x] **v0.2.0** — vistas semana y día, URLs por fecha (`#/semana/…`, `#/dia/…`), navegación con teclado.
 - [ ] **v0.3** — buscador por fecha: trabajo/descanso, festivo, paga, próximo descanso, próximo fin de semana libre.
 - [ ] **v0.4** — personalización: temas, selector de colores (sobre `themes.css`), modo oscuro manual.
 - [ ] **v0.5** — recordatorios en localStorage (`apex.reminders`), exportar/importar JSON.

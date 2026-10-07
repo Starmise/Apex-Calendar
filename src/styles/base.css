@@ -18,12 +18,58 @@ body {
   flex-direction: column;
 }
 
+a {
+  color: var(--accent);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 10;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
 main {
   width: 100%;
   max-width: 980px;
   margin: 0 auto;
   padding: 0 16px 24px;
   flex: 1;
+}
+
+#view:focus {
+  outline: none;
 }
 
 /* Encabezado */
@@ -45,12 +91,59 @@ main {
   letter-spacing: -0.01em;
 }
 
-.month-nav {
+.brand a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.tabs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 7px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.92rem;
+}
+
+.tabs a:hover {
+  background: var(--bg);
+}
+
+.tabs a[aria-current='page'] {
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-weight: 600;
+}
+
+/* Barra de periodo + simbología */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 18px;
+  flex-wrap: wrap;
+  margin: 4px 0 4px;
+}
+
+.period-nav {
   display: flex;
   gap: 6px;
 }
 
-.month-nav button {
+button,
+.button {
   font: inherit;
   font-size: 0.95rem;
   min-width: 44px;
@@ -61,21 +154,39 @@ main {
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-decoration: none;
 }
 
-.month-nav button:hover {
+button:hover,
+.button:hover {
   border-color: var(--accent);
 }
 
-.month-nav button:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+button.primary,
+.button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+  font-weight: 600;
+}
+
+button.danger {
+  color: var(--danger);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Simbología */
 .legend {
   list-style: none;
-  margin: 0 0 8px;
+  margin: 0;
   padding: 0;
   display: flex;
   flex-wrap: wrap;
@@ -105,49 +216,95 @@ main {
   background: var(--rest-bg);
 }
 
-/* Mes */
-.month-title {
+/* Títulos de vista */
+.view-title {
   font-size: 1.6rem;
   margin: 16px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
+.view-title:focus {
+  outline: none;
+}
+
+.view-title:focus-visible {
+  outline: 3px solid var(--focus);
+}
+
+.today-tag {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+.view-summary {
+  margin: 12px 0 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* Mes */
 .month-grid {
-  display: grid;
-  gap: 1px;
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
   background: var(--line);
   border: 1px solid var(--line);
   border-radius: 10px;
   overflow: hidden;
 }
 
-.month-row {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 1px;
+.month-grid th,
+.month-grid td {
+  padding: 0;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  vertical-align: top;
 }
 
-.month-head .weekday {
-  background: var(--surface);
+.month-grid tr > :last-child {
+  border-right: 0;
+}
+
+.month-grid tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.weekday {
   color: var(--muted);
   font-size: 0.8rem;
   font-weight: 600;
   text-align: center;
-  padding: 8px 0;
+  padding: 8px 0 !important;
+}
+
+.weekday abbr {
+  text-decoration: none;
 }
 
 .day {
   position: relative;
   min-height: 86px;
+  height: 100%;
   padding: 8px 10px;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  background: var(--surface);
   min-width: 0;
+  text-decoration: none;
+  color: inherit;
 }
 
-.day.empty {
-  background: var(--surface);
+.day:hover {
+  filter: brightness(0.97);
 }
 
 .day.work {
@@ -161,8 +318,13 @@ main {
 }
 
 .day.today {
-  outline: 3px solid var(--accent);
+  box-shadow: inset 0 0 0 3px var(--accent);
+}
+
+.day:focus-visible {
+  outline: 3px solid var(--focus);
   outline-offset: -3px;
+  z-index: 1;
 }
 
 .day-top {
@@ -193,6 +355,13 @@ main {
   -webkit-box-orient: vertical;
 }
 
+.day-reminder {
+  margin-top: auto;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
 .pay {
   display: inline-block;
   font-size: 0.7rem;
@@ -212,10 +381,124 @@ main {
   color: var(--x3-fg);
 }
 
-.month-summary {
-  margin: 12px 0 0;
-  font-size: 0.9rem;
-  color: var(--muted);
+/* Semana */
+.week-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.week-day {
+  min-height: 180px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  gap: 6px;
+}
+
+.week-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+}
+
+.week-name {
+  flex-basis: 100%;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.week-date {
+  font-size: 0.85rem;
+}
+
+.week-status {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.week-hours {
+  font-size: 0.85rem;
+}
+
+.week-reminders {
+  margin: auto 0 0;
+  padding: 6px 0 0;
+  list-style: none;
+  border-top: 1px dashed currentColor;
+  font-size: 0.78rem;
+  display: grid;
+  gap: 2px;
+}
+
+.week-reminders li {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Día */
+.day-card {
+  border-radius: 12px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+}
+
+.day-card.work {
+  background: var(--work-bg);
+  color: var(--work-fg);
+}
+
+.day-card.rest {
+  background: var(--rest-bg);
+  color: var(--rest-fg);
+}
+
+.day-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.day-card-status {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.day-card .pay {
+  font-size: 0.95rem;
+  padding: 5px 10px;
+}
+
+.day-facts {
+  margin: 14px 0 0;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 16px;
+}
+
+.day-facts dt {
+  font-weight: 700;
+}
+
+.day-facts dd {
+  margin: 0;
+}
+
+.panel {
+  margin-top: 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.panel h3 {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
 }
 
 /* Pie */
@@ -233,8 +516,41 @@ main {
 }
 
 /* Celular */
+@media (max-width: 760px) {
+  .week-list {
+    grid-template-columns: 1fr;
+  }
+
+  .week-day {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+
+  .week-head {
+    grid-column: 1;
+  }
+
+  .week-name {
+    flex-basis: auto;
+  }
+
+  .week-status {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: right;
+  }
+
+  .week-hours,
+  .week-day .day-holiday,
+  .week-reminders {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (max-width: 600px) {
-  .month-title {
+  .view-title {
     font-size: 1.3rem;
   }
 
@@ -256,11 +572,11 @@ main {
     font-size: 0.68rem;
   }
 
-  .day-holiday {
+  .month-grid .day-holiday {
     display: none;
   }
 
-  .day.holiday::after {
+  .month-grid .day.holiday::after {
     content: '';
     position: absolute;
     right: 5px;
@@ -274,5 +590,19 @@ main {
   .pay {
     font-size: 0.62rem;
     padding: 2px 4px;
+  }
+
+  .day-card-status {
+    font-size: 1.3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
   }
 }

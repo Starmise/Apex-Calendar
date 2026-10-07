@@ -9,23 +9,32 @@
     <title>Apex Calendar</title>
   </head>
   <body>
+    <a class="skip-link" href="#view">Saltar al contenido</a>
+
     <header class="app-header">
-      <h1 class="brand">Apex Calendar</h1>
-      <nav class="month-nav" aria-label="Navegación de meses">
-        <button id="prev" type="button" aria-label="Mes anterior">←</button>
-        <button id="today" type="button">Hoy</button>
-        <button id="next" type="button" aria-label="Mes siguiente">→</button>
+      <h1 class="brand"><a href="#/">Apex Calendar</a></h1>
+      <nav class="tabs" aria-label="Vistas">
+        <a href="#/mes" data-view="mes">Mes</a>
+        <a href="#/semana" data-view="semana">Semana</a>
+        <a href="#/dia" data-view="dia">Día</a>
       </nav>
     </header>
 
     <main>
-      <ul class="legend" aria-label="Simbología">
-        <li><span class="swatch swatch-work"></span>Trabajo</li>
-        <li><span class="swatch swatch-rest"></span>Descanso</li>
-        <li><span class="pay pay-x2">x2</span>Domingo trabajado</li>
-        <li><span class="pay pay-x3">x3</span>Festivo trabajado</li>
-      </ul>
-      <section id="view" aria-live="polite"></section>
+      <div class="toolbar" id="toolbar">
+        <nav class="period-nav" aria-label="Cambiar periodo">
+          <button id="prev" type="button" aria-label="Mes anterior">←</button>
+          <button id="today" type="button">Hoy</button>
+          <button id="next" type="button" aria-label="Mes siguiente">→</button>
+        </nav>
+        <ul class="legend" aria-label="Simbología">
+          <li><span class="swatch swatch-work"></span>Trabajo</li>
+          <li><span class="swatch swatch-rest"></span>Descanso</li>
+          <li><span class="pay pay-x2">x2</span>Domingo trabajado</li>
+          <li><span class="pay pay-x3">x3</span>Festivo trabajado</li>
+        </ul>
+      </div>
+      <section id="view" tabindex="-1"></section>
     </main>
 
     <footer class="app-footer">

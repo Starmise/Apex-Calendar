@@ -2,7 +2,20 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); versionado semántico.
 
-## [0.1.0] - 2026-10-07
+## [0.2.0] - 2026-10-07
+
+### Agregado
+- Vista semana (domingo a sábado) con horario, horas, paga y festivos de cada día, y resumen de la semana.
+- Vista día con horario, horas, explicación de la paga, festivo y posición en el rol (semana A/B).
+- URLs por fecha: `#/semana/AAAA-MM-DD` y `#/dia/AAAA-MM-DD`; las fechas inválidas regresan al mes actual.
+- Pestañas Mes / Semana / Día que conservan la fecha que se está viendo.
+- Cada día del mes y de la semana abre su vista día.
+- Teclado: flechas para moverse entre días (cambia de mes o semana al llegar al borde), Re Pág / Av Pág para cambiar de periodo, Inicio / Fin.
+
+### Cambiado
+- La vista mes ahora es una tabla con encabezados de columna, más clara para lectores de pantalla.
+
+ - 2026-10-07
 
 ### Agregado
 - Motor del ciclo de 14 días (`getDayInfo`) con ancla el 2 de agosto de 2026; funciona para cualquier fecha, pasada o futura.
