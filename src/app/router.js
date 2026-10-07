@@ -3,6 +3,7 @@
 //   #/mes/2026-08          vista mes
 //   #/semana/2026-08-02    vista semana (se normaliza al domingo)
 //   #/dia/2026-08-04       vista día
+//   #/buscar/2026-12-25    buscador (la fecha es opcional)
 //
 // Cualquier ruta desconocida o fecha inválida cae en el mes de hoy.
 
@@ -10,6 +11,9 @@ import { addDays, addMonths, isValidISO, startOfMonth, startOfWeek } from '../co
 
 /** Vistas de calendario: tienen fecha y se pueden recorrer con anterior/siguiente. */
 export const CALENDAR_VIEWS = ['mes', 'semana', 'dia'];
+
+/** Otras pantallas. La fecha es opcional y solo la usa el buscador. */
+export const PAGE_VIEWS = ['buscar'];
 
 /** Fecha canónica de cada vista (mes → día 1, semana → domingo). */
 function normalize(view, iso) {
@@ -29,6 +33,9 @@ export function parseRoute(hash, today) {
   if (!m) return fallback;
   const [, view, param] = m;
 
+  if (PAGE_VIEWS.includes(view)) {
+    return { view, date: param && isValidISO(param) ? param : null };
+  }
   if (!CALENDAR_VIEWS.includes(view)) return fallback;
 
   let iso = param;
@@ -41,11 +48,13 @@ export function parseRoute(hash, today) {
 /** { view, date } → hash canónico. */
 export function routeHash({ view, date }) {
   if (view === 'mes') return `#/mes/${date.slice(0, 7)}`;
+  if (PAGE_VIEWS.includes(view)) return date ? `#/${view}/${date}` : `#/${view}`;
   return `#/${view}/${date}`;
 }
 
 /** Ruta de la vista `view` que contiene la fecha `iso`. */
 export function routeFor(view, iso) {
+  if (PAGE_VIEWS.includes(view)) return { view, date: view === 'buscar' ? iso : null };
   return { view, date: normalize(view, iso) };
 }
 

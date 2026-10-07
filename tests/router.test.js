@@ -73,3 +73,13 @@ describe('rutas', () => {
     expect(focusDate({ view: 'semana', date: '2026-10-04' }, TODAY)).toBe(TODAY);
   });
 });
+
+describe('rutas del buscador', () => {
+  it('con y sin fecha', () => {
+    expect(parseRoute('#/buscar', TODAY)).toEqual({ view: 'buscar', date: null });
+    expect(parseRoute('#/buscar/2026-12-25', TODAY)).toEqual({ view: 'buscar', date: '2026-12-25' });
+    expect(parseRoute('#/buscar/2026-02-31', TODAY)).toEqual({ view: 'buscar', date: null });
+    expect(routeHash({ view: 'buscar', date: null })).toBe('#/buscar');
+    expect(routeHash(routeFor('buscar', '2026-12-25'))).toBe('#/buscar/2026-12-25');
+  });
+});

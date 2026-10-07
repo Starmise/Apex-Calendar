@@ -2,7 +2,15 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); versionado semántico.
 
-## [0.2.0] - 2026-10-07
+## [0.3.0] - 2026-10-07
+
+### Agregado
+- Buscador por fecha (`#/buscar/AAAA-MM-DD`): dice si ese día se trabaja o se descansa, el horario, si es festivo y la paga, con atajos para hoy, mañana, en una semana y en un mes.
+- Panel "Lo que sigue" en el buscador y en la vista día: próximo descanso o regreso al trabajo, bloque de días seguidos, próximo festivo y si se trabaja.
+- Próximo fin de semana libre (sábado y domingo). Con el rol actual nunca coinciden, así que se indica y se muestran el siguiente sábado libre y el siguiente domingo libre.
+- Motor de búsquedas (`src/core/search.js`) con límite de dos años y pruebas.
+
+ - 2026-10-07
 
 ### Agregado
 - Vista semana (domingo a sábado) con horario, horas, paga y festivos de cada día, y resumen de la semana.

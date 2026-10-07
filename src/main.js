@@ -1,9 +1,10 @@
-// Arranque de la app y router por hash: #/mes/2026-08, #/semana/2026-08-02, #/dia/2026-08-04
+// Arranque de la app y router por hash: #/mes/2026-08, #/semana/2026-08-02, #/dia/2026-08-04, #/buscar
 import './styles/themes.css';
 import './styles/base.css';
 import { renderMonth } from './views/month.js';
 import { renderWeek } from './views/week.js';
 import { renderDay } from './views/day.js';
+import { renderSearch, upcomingPanel } from './views/search.js';
 import { addDays, todayISO } from './core/dates.js';
 import { CALENDAR_VIEWS, focusDate, parseRoute, routeFor, routeHash, shiftRoute } from './app/router.js';
 
@@ -25,6 +26,8 @@ const PERIOD = {
 let pendingFocus = null;
 /** Si el próximo render vino de una acción del usuario, el foco va al título de la vista. */
 let moveFocus = false;
+/** Selector que recibe el foco tras renderizar (p. ej. el resultado del buscador). */
+let pendingSelector = null;
 
 const today = () => todayISO();
 const current = () => parseRoute(location.hash, today());
@@ -45,11 +48,20 @@ function render() {
   const canonical = routeHash(route);
   if (location.hash !== canonical) history.replaceState(null, '', canonical);
 
-  const focus = pendingFocus ?? focusDate(route, t);
+  const focus = pendingFocus ?? (route.date ? focusDate(route, t) : t);
   const opts = { date: route.date, today: t, focus };
   if (route.view === 'mes') renderMonth(view, opts);
   if (route.view === 'semana') renderWeek(view, opts);
-  if (route.view === 'dia') renderDay(view, opts);
+  if (route.view === 'dia') renderDay(view, { ...opts, extras: (iso) => [upcomingPanel(iso, t)] });
+  if (route.view === 'buscar') {
+    renderSearch(view, {
+      ...opts,
+      onSearch: (iso) => {
+        pendingSelector = '#search-result-title';
+        go({ view: 'buscar', date: iso });
+      },
+    });
+  }
 
   // Pestañas: conservan la fecha que se está viendo.
   for (const tab of tabs) {
@@ -69,10 +81,13 @@ function render() {
 
   if (pendingFocus) {
     view.querySelector(`[data-date="${pendingFocus}"]`)?.focus();
+  } else if (pendingSelector) {
+    view.querySelector(pendingSelector)?.focus();
   } else if (moveFocus) {
     view.querySelector('.view-title')?.focus();
   }
   pendingFocus = null;
+  pendingSelector = null;
   moveFocus = false;
 }
 

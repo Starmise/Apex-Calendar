@@ -466,6 +466,7 @@ button:disabled {
 .day-card-status {
   margin: 0;
   font-size: 1.6rem;
+  font-weight: 700;
 }
 
 .day-card .pay {
@@ -499,6 +500,91 @@ button:disabled {
 .panel h3 {
   margin: 0 0 10px;
   font-size: 1.05rem;
+}
+
+/* Lo que sigue */
+.upcoming-streak {
+  margin: 0 0 10px;
+}
+
+.upcoming-list {
+  margin: 0;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 16px;
+}
+
+.upcoming-list dt {
+  font-weight: 700;
+}
+
+.upcoming-list dd {
+  margin: 0;
+}
+
+/* Buscador */
+.search-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.search-form label {
+  font-weight: 600;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  font-size: 1rem;
+  min-height: 40px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.search-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex-basis: 100%;
+}
+
+.search-quick button {
+  min-height: 34px;
+  font-size: 0.88rem;
+}
+
+.search-result-title {
+  margin: 0 0 10px;
+  font-size: 1.15rem;
+}
+
+.search-result-title:focus {
+  outline: none;
+}
+
+.search-result-title:focus-visible {
+  outline: 3px solid var(--focus);
+}
+
+.search-rel {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.search-links {
+  margin-top: 14px;
 }
 
 /* Pie */
@@ -550,6 +636,17 @@ button:disabled {
 }
 
 @media (max-width: 600px) {
+  .upcoming-list,
+  .day-facts {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .upcoming-list dd,
+  .day-facts dd {
+    margin-bottom: 8px;
+  }
+
   .view-title {
     font-size: 1.3rem;
   }
