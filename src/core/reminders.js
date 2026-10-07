@@ -177,3 +177,37 @@ export function mergeReminders(current, incoming) {
 export function backupFileName(today) {
   return `apex-calendar-${today}.json`;
 }
+
+// ——— Avisos ———
+
+/** Máximo retraso con el que todavía se avisa (p. ej. si la computadora estaba suspendida). */
+export const NOTIFY_GRACE_MS = 15 * 60_000;
+
+const pad2 = (n) => String(n).padStart(2, '0');
+const localISO = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+
+/**
+ * Recordatorios con aviso cuya hora (local) cae en el intervalo (from, to].
+ * @param {object[]} list
+ * @param {Date} from última revisión
+ * @param {Date} to   ahora
+ * @returns {{reminder: object, date: string, at: number}[]}
+ */
+export function dueReminders(list, from, to) {
+  const start = Math.max(from.getTime(), to.getTime() - NOTIFY_GRACE_MS);
+  const end = to.getTime();
+  if (end <= start) return [];
+  const out = [];
+  const firstDay = localISO(new Date(start));
+  const lastDay = localISO(to);
+  for (let iso = firstDay; iso <= lastDay; iso = addDays(iso, 1)) {
+    const [y, m, d] = iso.split('-').map(Number);
+    for (const r of list) {
+      if (!r.notify || !r.time || !occursOn(r, iso)) continue;
+      const [hh, mm] = r.time.split(':').map(Number);
+      const at = new Date(y, m - 1, d, hh, mm).getTime();
+      if (at > start && at <= end) out.push({ reminder: r, date: iso, at });
+    }
+  }
+  return out.sort((a, b) => a.at - b.at);
+}

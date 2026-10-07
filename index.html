@@ -6,6 +6,11 @@
     <meta name="description" content="Calendario de trabajo: turnos, descansos, domingos x2 y festivos x3." />
     <meta name="theme-color" content="#1f5fd1" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Apex" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <title>Apex Calendar</title>
     <script>
       // Aplica el modo claro/oscuro guardado antes de pintar, para evitar un parpadeo.
@@ -44,7 +49,9 @@
           <li><span class="pay pay-x3">x3</span>Festivo trabajado</li>
         </ul>
       </div>
-      <section id="view" tabindex="-1"></section>
+      <section id="view" tabindex="-1" aria-label="Contenido">
+        <noscript>Apex Calendar necesita JavaScript activado para mostrar el calendario.</noscript>
+      </section>
     </main>
 
     <footer class="app-footer">

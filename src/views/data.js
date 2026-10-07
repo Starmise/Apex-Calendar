@@ -51,18 +51,11 @@ export function dataSection({ reminderCount, onExport, onImport, onClear }) {
   file.accept = 'application/json,.json';
   file.id = 'import-file';
   file.className = 'visually-hidden';
-  const pick = el('label', 'button', 'Elegir archivo…');
-  pick.htmlFor = 'import-file';
-  // La etiqueta funciona como botón: que también responda a Enter y espacio.
-  pick.tabIndex = 0;
-  pick.setAttribute('role', 'button');
-  pick.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      file.click();
-    }
-  });
+  const pick = el('button', null, 'Elegir archivo…');
+  pick.type = 'button';
+  pick.addEventListener('click', () => file.click());
   file.tabIndex = -1;
+  file.setAttribute('aria-hidden', 'true');
   file.addEventListener('change', () => {
     const f = file.files?.[0];
     if (!f) return;

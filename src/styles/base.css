@@ -933,6 +933,60 @@ button.small {
   font-size: 1.3rem;
 }
 
+/* Aplicación y avisos */
+.status-list {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.status-list li::before {
+  content: '●';
+  margin-right: 8px;
+}
+
+.status-list .ok::before {
+  color: var(--rest-fg);
+  content: '✓';
+  font-weight: 700;
+}
+
+.status-list .pending::before {
+  color: var(--muted);
+}
+
+.permission {
+  margin: 0 0 12px;
+  font-weight: 600;
+}
+
+.permission.denied {
+  color: var(--danger);
+}
+
+.shortcuts {
+  margin: 0;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 8px 16px;
+}
+
+.shortcuts dd {
+  margin: 0;
+}
+
+kbd {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 1px 6px;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--bg);
+}
+
 /* Pie */
 .app-footer {
   width: 100%;
@@ -997,12 +1051,14 @@ button.small {
 
   .tabs {
     width: 100%;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .tabs a {
-    padding: 0 8px;
-    font-size: 0.85rem;
+    justify-content: center;
+    padding: 0 6px;
+    font-size: 0.88rem;
   }
 
   .upcoming-list,

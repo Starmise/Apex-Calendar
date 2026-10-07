@@ -1,0 +1,26 @@
+{
+  "name": "Apex Calendar",
+  "short_name": "Apex",
+  "description": "Calendario de trabajo: turnos, descansos, domingos x2 y festivos x3.",
+  "lang": "es-MX",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "id": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f7f6f2",
+  "theme_color": "#1f5fd1",
+  "categories": ["productivity", "business"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Hoy", "url": "./#/dia", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+    { "name": "¿Se trabaja ese día?", "short_name": "Buscar", "url": "./#/buscar", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+    { "name": "Recordatorios", "url": "./#/recordatorios", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] }
+  ]
+}

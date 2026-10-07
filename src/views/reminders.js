@@ -231,7 +231,7 @@ export function renderReminders(root, { date, today, reminders, editId = null, s
       const li = reminderItem(reminder, { onEdit, onDelete, showDate: iso });
       const link = el('a', 'reminder-day', relativeDays(today, iso));
       link.href = `#/dia/${iso}`;
-      link.setAttribute('aria-label', `Ver el día ${formatShort(iso)}`);
+      link.append(el('span', 'visually-hidden', ` — ver el día ${formatShort(iso)}`));
       li.querySelector('.reminder-main').append(link);
       ul.append(li);
     }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  buildBackup, mergeReminders, nextOccurrence, normalizeReminder, normalizeReminders, occursOn,
+  buildBackup, dueReminders, mergeReminders, nextOccurrence, normalizeReminder, normalizeReminders, occursOn,
   parseBackup, remindersOn, upcoming,
 } from '../src/core/reminders.js';
 
@@ -105,5 +105,35 @@ describe('respaldo', () => {
   it('combinar: el importado gana si tiene el mismo id', () => {
     const merged = mergeReminders([r({}), r({ id: 'b' })], [r({ text: 'Nuevo' }), r({ id: 'c' })]);
     expect(merged.map((x) => `${x.id}:${x.text}`)).toEqual(['a:Nuevo', 'b:Pagar luz', 'c:Pagar luz']);
+  });
+});
+
+describe('avisos', () => {
+  const list = [
+    r({ id: 'n', time: '07:30', notify: true, repeat: 'weekly' }),
+    r({ id: 's', time: '07:30', notify: false }),
+    r({ id: 't', notify: true }), // sin hora → nunca avisa
+  ];
+  const at = (iso, hh, mm, ss = 0) => new Date(...iso.split('-').map((v, i) => (i === 1 ? v - 1 : Number(v))), hh, mm, ss);
+
+  it('avisa solo los que tienen aviso y hora dentro del intervalo', () => {
+    const due = dueReminders(list, at('2026-10-14', 7, 29, 40), at('2026-10-14', 7, 30, 0));
+    expect(due.map((x) => x.reminder.id)).toEqual(['n']);
+    expect(due[0].date).toBe('2026-10-14');
+  });
+
+  it('no repite fuera del intervalo', () => {
+    expect(dueReminders(list, at('2026-10-14', 7, 30, 0), at('2026-10-14', 7, 31, 0))).toEqual([]);
+    expect(dueReminders(list, at('2026-10-13', 7, 0), at('2026-10-13', 8, 0))).toEqual([]); // no le toca ese día
+  });
+
+  it('si pasó mucho tiempo (suspensión), solo avisa lo de los últimos 15 minutos', () => {
+    expect(dueReminders(list, at('2026-10-14', 6, 0), at('2026-10-14', 9, 0))).toEqual([]);
+    expect(dueReminders(list, at('2026-10-14', 6, 0), at('2026-10-14', 7, 40))).toHaveLength(1);
+  });
+
+  it('cruza la medianoche', () => {
+    const night = [r({ id: 'm', date: '2026-10-07', time: '23:58', notify: true, repeat: 'weekly' })];
+    expect(dueReminders(night, at('2026-10-07', 23, 55), at('2026-10-08', 0, 5))).toHaveLength(1);
   });
 });

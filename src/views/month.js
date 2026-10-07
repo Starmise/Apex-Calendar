@@ -101,18 +101,22 @@ export function renderMonth(root, { date, today, focus, reminders = () => 0 }) {
     if (info.holiday) link.classList.add('holiday');
     const extra = count ? ` · ${count} ${count === 1 ? 'recordatorio' : 'recordatorios'}` : '';
     link.title = describe(info) + extra;
-    link.setAttribute(
-      'aria-label',
-      `${WEEKDAYS_ES[weekday(iso)]} ${day}: ${describe(info)}${extra}${iso === today ? ' (hoy)' : ''}`,
+    // Nombre accesible: texto oculto completo; lo visual (número, etiquetas) se oculta a lectores.
+    link.append(
+      el('span', 'visually-hidden', `${WEEKDAYS_ES[weekday(iso)]} ${day}: ${describe(info)}${extra}${iso === today ? ' (hoy)' : ''}`),
     );
 
     const top = el('span', 'day-top');
+    top.setAttribute('aria-hidden', 'true');
     top.append(el('span', 'day-num', String(day)));
     if (info.pay > 1) top.append(payBadge(info.pay));
     link.append(top);
 
-    if (info.type === 'work') link.append(el('span', 'day-range', shortRange(info)));
-    if (info.holiday) link.append(el('span', 'day-holiday', info.holiday));
+    const visual = [];
+    if (info.type === 'work') visual.push(el('span', 'day-range', shortRange(info)));
+    if (info.holiday) visual.push(el('span', 'day-holiday', info.holiday));
+    for (const v of visual) v.setAttribute('aria-hidden', 'true');
+    link.append(...visual);
     if (count) {
       const dot = el('span', 'day-reminder', count > 1 ? `● ${count}` : '●');
       dot.setAttribute('aria-hidden', 'true');

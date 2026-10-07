@@ -1,5 +1,6 @@
 // Arranque de la app y router por hash:
 //   #/mes/2026-08 · #/semana/2026-08-02 · #/dia/2026-08-04 · #/buscar · #/recordatorios · #/ajustes
+// Las vistas viven en src/views/, la lógica pura en src/core/ y lo del navegador en src/app/.
 import './styles/themes.css';
 import './styles/base.css';
 import { renderMonth } from './views/month.js';
@@ -9,6 +10,7 @@ import { renderSearch, upcomingPanel } from './views/search.js';
 import { renderSettings } from './views/settings.js';
 import { renderReminders, dayRemindersPanel } from './views/reminders.js';
 import { dataSection } from './views/data.js';
+import { appSection, notificationsSection, shortcutsSection } from './views/app-settings.js';
 import { createStore } from './store/storage.js';
 import { normalizeSettings, DEFAULT_SETTINGS } from './core/settings.js';
 import {
@@ -16,6 +18,10 @@ import {
 } from './core/reminders.js';
 import { applyTheme } from './app/theme.js';
 import { showToast } from './app/toast.js';
+import { canInstall, initPwa, isIOS, isOfflineReady, isStandalone, onPwaChange, promptInstall } from './app/pwa.js';
+import {
+  notificationPermission, requestNotificationPermission, showReminderNotification, startNotifier,
+} from './app/notifier.js';
 import { addDays, todayISO } from './core/dates.js';
 import { CALENDAR_VIEWS, focusDate, parseRoute, routeFor, routeHash, shiftRoute } from './app/router.js';
 
@@ -61,12 +67,24 @@ let editId = null;
 function saveReminder(data) {
   const r = normalizeReminder(data);
   if (!r) return;
+  if (r.notify) askForNotifications();
   const exists = reminders.some((x) => x.id === r.id);
   setReminders(exists ? reminders.map((x) => (x.id === r.id ? r : x)) : [...reminders, r]);
   editId = null;
   showToast(exists ? 'Cambios guardados.' : `Recordatorio agregado: ${r.text}`);
   if (exists) pendingSelector = '#reminder-form-title';
   renderKeepingFocus();
+}
+
+/** Pide permiso de notificaciones la primera vez que se marca "Avisarme". */
+async function askForNotifications() {
+  const before = notificationPermission();
+  if (before === 'granted') return;
+  const after = before === 'default' ? await requestNotificationPermission() : before;
+  if (after === 'denied') {
+    showToast('Las notificaciones están bloqueadas: el aviso aparecerá solo dentro de la app.', { timeout: 8000 });
+  }
+  if (current().view === 'ajustes') renderKeepingFocus();
 }
 
 function deleteReminder(id) {
@@ -210,7 +228,7 @@ function render() {
     case 'dia':
       renderDay(view, {
         ...opts,
-        extras: (iso) => [dayRemindersPanel(iso, { reminders, ...reminderHandlers }), upcomingPanel(iso, t)],
+        extras: (iso) => [dayRemindersPanel(iso, { reminders, showNotify: true, ...reminderHandlers }), upcomingPanel(iso, t)],
       });
       break;
     case 'buscar':
@@ -223,7 +241,7 @@ function render() {
       });
       break;
     case 'recordatorios':
-      renderReminders(view, { ...opts, reminders, editId, ...reminderHandlers });
+      renderReminders(view, { ...opts, reminders, editId, showNotify: true, ...reminderHandlers });
       break;
     case 'ajustes':
       renderSettings(view, {
@@ -231,7 +249,26 @@ function render() {
         onChange: updateSettings,
         persistent: store.persistent,
         sections: [
+          appSection({
+            standalone: isStandalone(),
+            canInstall: canInstall(),
+            ios: isIOS(),
+            offlineReady: isOfflineReady(),
+            onInstall: promptInstall,
+          }),
+          notificationsSection({
+            permission: notificationPermission(),
+            onRequest: askForNotifications,
+            onTest: () =>
+              showReminderNotification({
+                title: 'Aviso de prueba',
+                body: 'Así se verán los avisos de tus recordatorios.',
+                url: './#/recordatorios',
+                tag: 'apex-test',
+              }),
+          }),
           dataSection({ reminderCount: reminders.length, onExport: exportData, onImport: importData, onClear: clearData }),
+          shortcutsSection(),
         ],
       });
       break;
@@ -322,5 +359,18 @@ window.addEventListener('storage', (e) => {
   applyTheme(settings);
   renderKeepingFocus();
 });
+
+// ——— App instalable, sin conexión y avisos ———
+
+initPwa({
+  onOpen: (url) => {
+    const hash = new URL(url, location.href).hash;
+    if (hash) location.hash = hash;
+  },
+});
+onPwaChange(() => {
+  if (current().view === 'ajustes') renderKeepingFocus();
+});
+startNotifier(() => reminders);
 
 render();

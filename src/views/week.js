@@ -66,10 +66,10 @@ export function renderWeek(root, { date, today, focus, reminders = () => [] }) {
     }
 
     const extra = items.length ? ` · ${items.length} ${items.length === 1 ? 'recordatorio' : 'recordatorios'}` : '';
-    link.setAttribute(
-      'aria-label',
-      `${WEEKDAYS_ES[weekday(iso)]} ${formatShort(iso)}: ${describe(info)}${extra}${iso === today ? ' (hoy)' : ''}`,
+    link.prepend(
+      el('span', 'visually-hidden', `${WEEKDAYS_ES[weekday(iso)]} ${formatShort(iso)}: ${describe(info)}${extra}${iso === today ? ' (hoy)' : ''}`),
     );
+    for (const child of [...link.children].slice(1)) child.setAttribute('aria-hidden', 'true');
     li.append(link);
     list.append(li);
   }

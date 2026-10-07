@@ -2,7 +2,20 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); versionado semántico.
 
-## [0.5.0] - 2026-10-07
+## [1.0.0] - 2026-10-07
+
+### Agregado
+- App instalable (PWA): manifiesto, íconos (incluido maskable para Android y ícono para iPhone) y accesos directos a Hoy, Buscar y Recordatorios.
+- Funciona sin conexión: un service worker propio (sin dependencias) guarda la app al primer uso; la página se pide primero a la red y, sin conexión, se usa la copia guardada.
+- Aviso "Hay una versión nueva · Actualizar" cuando se publica un cambio; avisos de conexión perdida y recuperada.
+- Avisos de recordatorios a la hora indicada (opción "Avisarme" en cada recordatorio), con notificación del sistema si se da permiso y aviso dentro de la app siempre. Solo funcionan con la app abierta; si la computadora estuvo suspendida, solo se avisa lo de los últimos 15 minutos.
+- Ajustes → Aplicación (instalar, estado sin conexión, instrucciones para iPhone), Avisos (permiso y aviso de prueba) y Atajos de teclado.
+- Accesibilidad: enlace "Saltar al contenido", foco al título al cambiar de vista, navegación completa con teclado, nombres accesibles completos en cada día, errores de formulario anunciados, respeto a "reducir movimiento". Revisado con axe-core (WCAG 2.2 AA) en todas las vistas, paletas y modos, en escritorio y celular: sin incidencias.
+
+### Cambiado
+- En celular las pestañas se acomodan en una cuadrícula de 3 × 2.
+
+ - 2026-10-07
 
 ### Agregado
 - Recordatorios (`#/recordatorios`) con texto, fecha, hora opcional y repetición: una vez, cada semana, cada 14 días (como el rol), cada mes o cada año.
