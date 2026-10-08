@@ -28,13 +28,21 @@ describe('swipeDirection', () => {
     expect(swipeDirection({ dx: -20, dy: 0, dt: 10 })).toBe(0); // muy corto aunque sea rápido
   });
 
-  it('ignora gestos con mucha componente vertical (scroll)', () => {
-    expect(swipeDirection({ dx: -100, dy: 80, dt: 300 })).toBe(0);
+  it('ignora gestos que terminan más verticales que horizontales (scroll)', () => {
+    expect(swipeDirection({ dx: -100, dy: 120, dt: 300 })).toBe(0);
+    expect(swipeDirection({ dx: 100, dy: -101, dt: 300 })).toBe(0);
     expect(swipeDirection({ dx: 0, dy: 200, dt: 300 })).toBe(0);
   });
 
   it('acepta una diagonal leve', () => {
     expect(swipeDirection({ dx: 100, dy: 50, dt: 300 })).toBe(-1);
+  });
+
+  // v1.3.1: el pulgar dibuja un arco; antes estos gestos movían el calendario y regresaban.
+  it('acepta el arco natural del pulgar', () => {
+    expect(swipeDirection({ dx: -150, dy: -100, dt: 250 })).toBe(1);
+    expect(swipeDirection({ dx: -220, dy: 150, dt: 300 })).toBe(1);
+    expect(swipeDirection({ dx: 120, dy: 100, dt: 300 })).toBe(-1);
   });
 
   it('un toque (sin movimiento) no es deslizamiento', () => {
