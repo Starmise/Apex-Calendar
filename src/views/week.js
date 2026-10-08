@@ -2,7 +2,8 @@
 
 import { getDayInfo, shortRange } from '../core/schedule.js';
 import { addDays, formatShort, weekday, MONTHS_ES, WEEKDAYS_ES } from '../core/dates.js';
-import { el, describe, fmtHours, payBadge } from './common.js';
+import { paydayOn } from '../core/paydays.js';
+import { el, describe, fmtHours, payBadge, paydayBadge } from './common.js';
 import { summarize, summaryText } from './month.js';
 
 function weekTitle(start) {
@@ -19,7 +20,7 @@ function weekTitle(start) {
  * @param {{date: string, today: string, focus?: string, reminders?: (iso: string) => object[]}} opts
  *   date = domingo de la semana.
  */
-export function renderWeek(root, { date, today, focus, reminders = () => [] }) {
+export function renderWeek(root, { date, today, focus, reminders = () => [], bank = 'general' }) {
   root.replaceChildren();
 
   const title = el('h2', 'view-title', `Semana del ${weekTitle(date)}`);
@@ -35,6 +36,7 @@ export function renderWeek(root, { date, today, focus, reminders = () => [] }) {
   for (const iso of dates) {
     const info = getDayInfo(iso);
     const items = reminders(iso);
+    const payday = paydayOn(iso, { bank });
     const li = el('li');
     const link = el('a', `week-day day ${info.type}`);
     link.href = `#/dia/${iso}`;
@@ -45,10 +47,12 @@ export function renderWeek(root, { date, today, focus, reminders = () => [] }) {
       link.setAttribute('aria-current', 'date');
     }
     if (info.holiday) link.classList.add('holiday');
+    if (payday) link.classList.add('payday');
 
     const head = el('span', 'week-head');
     const name = el('span', 'week-name', WEEKDAYS_ES[weekday(iso)]);
     head.append(name, el('span', 'week-date', formatShort(iso)));
+    if (payday) head.append(paydayBadge());
     if (info.pay > 1) head.append(payBadge(info.pay));
     link.append(head);
 
@@ -57,6 +61,7 @@ export function renderWeek(root, { date, today, focus, reminders = () => [] }) {
     );
     if (info.type === 'work') link.append(el('span', 'week-hours', `${fmtHours(info.hours)} h`));
     if (info.holiday) link.append(el('span', 'day-holiday', info.holiday));
+    if (payday) link.append(el('span', 'week-payday', 'Día de pago'));
 
     if (items.length) {
       const ul = el('ul', 'week-reminders');
@@ -67,7 +72,7 @@ export function renderWeek(root, { date, today, focus, reminders = () => [] }) {
 
     const extra = items.length ? ` · ${items.length} ${items.length === 1 ? 'recordatorio' : 'recordatorios'}` : '';
     link.prepend(
-      el('span', 'visually-hidden', `${WEEKDAYS_ES[weekday(iso)]} ${formatShort(iso)}: ${describe(info)}${extra}${iso === today ? ' (hoy)' : ''}`),
+      el('span', 'visually-hidden', `${WEEKDAYS_ES[weekday(iso)]} ${formatShort(iso)}: ${describe(info, payday)}${extra}${iso === today ? ' (hoy)' : ''}`),
     );
     for (const child of [...link.children].slice(1)) child.setAttribute('aria-hidden', 'true');
     li.append(link);

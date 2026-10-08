@@ -74,6 +74,14 @@ export function renderSettings(root, { settings, onChange, sections = [], persis
   mode.addEventListener('change', (e) => onChange({ theme: e.target.value }));
   root.append(mode);
 
+  // Día de pago
+  const bank = fieldset('Día de pago');
+  bank.append(el('p', 'settings-hint', 'La empresa paga el 15 y el 30 (en febrero, el último día). Si cae en festivo se adelanta.'));
+  bank.append(radio('bank', 'general', settings.bank !== 'bbva', 'Otro banco', 'Se marca el 15 y el 30'));
+  bank.append(radio('bank', 'bbva', settings.bank === 'bbva', 'BBVA', 'El depósito llega un día antes: 14 y 29'));
+  bank.addEventListener('change', (e) => onChange({ bank: e.target.value }));
+  root.append(bank);
+
   // Paleta
   const pal = fieldset('Paleta');
   pal.classList.add('palette-group');

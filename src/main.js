@@ -219,7 +219,7 @@ function render() {
   if (location.hash !== canonical) history.replaceState(null, '', canonical);
 
   const focus = pendingFocus ?? (route.date ? focusDate(route, t) : t);
-  const opts = { date: route.date, today: t, focus };
+  const opts = { date: route.date, today: t, focus, bank: settings.bank };
   const reminderHandlers = { onSave: saveReminder, onDelete: deleteReminder, onEdit: editReminder };
 
   switch (route.view) {
@@ -232,7 +232,7 @@ function render() {
     case 'dia':
       renderDay(view, {
         ...opts,
-        extras: (iso) => [dayRemindersPanel(iso, { reminders, showNotify: true, ...reminderHandlers }), upcomingPanel(iso, t)],
+        extras: (iso) => [dayRemindersPanel(iso, { reminders, showNotify: true, ...reminderHandlers }), upcomingPanel(iso, t, { bank: settings.bank })],
       });
       break;
     case 'buscar':

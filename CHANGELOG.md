@@ -2,6 +2,16 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); versionado semántico.
 
+## [1.3.0] - 2026-10-08
+
+### Agregado
+- **Días de pago** marcados con **$** en Mes, Semana, Día y Buscar, y en la leyenda. La empresa paga el 15 y el 30 de cada mes (en febrero, el último día: 28 o 29).
+- **Ajustes → Día de pago**: elegir *Otro banco* (15 y 30) o *BBVA* (el depósito llega un día antes: 14 y 29). Se guarda en `apex.settings` y viaja en el respaldo.
+- Si el día de pago es festivo se adelanta un día, y sigue adelantándose si el anterior también es festivo (ej.: BBVA con el 30 festivo → 28). Sábados y domingos no lo mueven.
+- La ficha del día explica la quincena y por qué se movió; el panel "Lo que sigue" muestra el próximo día de pago; el resumen del mes lista sus días de pago.
+- Diciembre queda sin días de pago por ahora (pendiente de confirmar con la empresa).
+- Pruebas de las reglas de pago (`tests/paydays.test.js`).
+
 ## [1.2.0] - 2026-10-07
 
 ### Agregado

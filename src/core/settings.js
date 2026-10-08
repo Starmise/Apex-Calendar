@@ -2,6 +2,7 @@
 
 import { isHex } from './colors.js';
 import { CUSTOM_COLORS, DEFAULT_PALETTE, PALETTES } from '../data/palettes.js';
+import { BANKS } from './paydays.js';
 
 export const THEMES = ['auto', 'light', 'dark'];
 
@@ -10,6 +11,8 @@ export const DEFAULT_SETTINGS = Object.freeze({
   palette: DEFAULT_PALETTE,
   /** Colores propios: { work: '#rrggbb', … } — solo los que el usuario cambió. */
   colors: Object.freeze({}),
+  /** Banco donde se recibe la paga: 'bbva' adelanta el depósito un día. */
+  bank: 'general',
 });
 
 /** Devuelve ajustes válidos a partir de cualquier cosa (datos viejos, importados o dañados). */
@@ -25,5 +28,6 @@ export function normalizeSettings(raw) {
     theme: THEMES.includes(s.theme) ? s.theme : DEFAULT_SETTINGS.theme,
     palette: PALETTES.some((p) => p.id === s.palette) ? s.palette : DEFAULT_SETTINGS.palette,
     colors,
+    bank: BANKS.includes(s.bank) ? s.bank : DEFAULT_SETTINGS.bank,
   };
 }
