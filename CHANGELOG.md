@@ -2,6 +2,13 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); versionado semántico.
 
+## [1.2.0] - 2026-10-07
+
+### Agregado
+- En celular (o cualquier pantalla táctil) se puede deslizar el dedo sobre el calendario para cambiar de periodo en **Mes**, **Semana** y **Día**: hacia la izquierda va al siguiente y hacia la derecha al anterior. El calendario sigue al dedo y el periodo nuevo entra deslizándose (sin animación si el sistema pide reducir movimiento).
+- El gesto solo cuenta si es claramente horizontal: el scroll vertical y el zoom con dos dedos funcionan igual que antes, y deslizar empezando sobre un día no abre ese día. Los botones ← Hoy → siguen disponibles.
+- Pruebas de la lógica del gesto (`tests/swipe.test.js`).
+
 ## [1.1.0] - 2026-10-07
 
 ### Cambiado

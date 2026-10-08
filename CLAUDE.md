@@ -41,6 +41,7 @@ src/pwa/sw.js            plantilla del SW; el plugin pwaPrecache de vite.config.
 public/                  manifest.webmanifest, íconos 192/512/maskable, apple-touch-icon
 src/data/                default-schedule.json, holidays-mx.js, palettes.js (cada paleta = juego completo de colores, incluidos fondo y texto; tests/colors.test.js verifica contraste AA y que sean distintas)
 src/app/router.js        rutas por hash (puro, probado): parseRoute, routeHash, shiftRoute
+src/app/swipe.js         deslizar con el dedo en mes/semana/día: swipeDirection/lockAxis/dragOffset (puros, probados) + attachSwipe (Pointer Events, solo touch)
 src/views/               DOM puro, sin framework: common, month, week, day, search, settings, reminders, data
 src/main.js              arranque, render por ruta, teclado: #/mes/AAAA-MM, #/semana/AAAA-MM-DD, #/dia/AAAA-MM-DD
 src/styles/themes.css    neutros + valores por defecto; modo: sin atributo = sistema, html[data-theme=light|dark] = forzado
@@ -71,6 +72,7 @@ Principios: `core/` no toca DOM ni localStorage. Sin framework. Vite 8 + Vitest 
 - [x] **v0.5.0** — recordatorios (`#/recordatorios`, `apex.reminders`) con repetición semana/14 días/mes/año; exportar/importar/borrar en Ajustes → Tus datos.
 - [x] **v1.0.0** — PWA instalable y offline (SW propio en `src/pwa/sw.js`), avisos de recordatorios con la app abierta, accesibilidad revisada con axe-core (WCAG 2.2 AA, 0 incidencias).
 - [x] **v1.1.0** — paletas rediseñadas y distintas entre sí (Pizarrón por defecto, Vino y menta, Cítrico, Lavanda, Alto contraste); README para usuarios sin experiencia técnica.
+- [x] **v1.2.0** — deslizar con el dedo para cambiar de mes, semana o día (izquierda = siguiente); respeta scroll vertical, zoom y "reducir movimiento"; no mueve el foco.
 - [ ] Después — excepciones por fecha (vacaciones, permisos) en `apex.overrides`; editor de ciclo.
 
 Claves de localStorage: `apex.version` (DATA_VERSION de `src/store/storage.js`), `apex.settings`, `apex.reminders`; prevista `apex.overrides`. Al cambiar la forma de algo guardado: subir DATA_VERSION y agregar la migración en `MIGRATIONS`.
