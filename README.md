@@ -16,6 +16,7 @@ No se necesita crear cuenta, ni contraseña, ni descargar nada de la tienda de a
 | ⬜ Día **blanco** | Descansas. |
 | Etiqueta **x2** | Es domingo y trabajas: **paga doble**. |
 | Etiqueta **x3** | Es día festivo y trabajas: **paga triple**. |
+| Etiqueta **$** | Es tu día de pago (quincena). |
 | El día con **marco** | Es hoy. |
 | Un **puntito** abajo del día | Tienes un recordatorio ese día. |
 
@@ -34,7 +35,7 @@ Arriba hay unos botones para moverte por la app:
 - **Día** — todo sobre un solo día: horario, horas, paga y cuándo es tu próximo descanso.
 - **Buscar** — elige cualquier fecha y te dice si ese día trabajas o descansas. Útil para planear una cita, una fiesta o un viaje.
 - **Recordatorios** — apunta cosas que no quieres olvidar ("hoy nos traen comida a la oficina", "pagar la renta"). Pueden repetirse cada semana, cada mes, etc.
-- **Ajustes** — cambia los colores, activa el modo oscuro, haz un respaldo de tus recordatorios y más.
+- **Ajustes** — elige si cobras en **BBVA** (para ver tu día de pago correcto), cambia los colores, activa el modo oscuro, haz un respaldo de tus recordatorios y más.
 
 En el celular también puedes **deslizar el dedo** sobre el calendario: hacia la izquierda para ir al mes (o semana, o día) siguiente y hacia la derecha para regresar.
 
@@ -87,6 +88,9 @@ Solo la primera vez que lo abres. Después funciona sin conexión.
 
 **¿Los festivos son días libres?**
 No. Si te toca trabajar en festivo, trabajas y se marca con **x3** (paga triple). Si cae en tu día de descanso, se marca pero no hay paga extra.
+
+**¿Qué día me pagan?**
+La empresa paga el **15** y el **30** de cada mes (en febrero, el último día). Si tienes cuenta **BBVA**, el depósito llega un día antes: el **14** y el **29**. Si el día de pago es festivo, se adelanta (por ejemplo, con BBVA y el 30 festivo, cobras el 28). Escoge tu banco en **Ajustes → Día de pago**. Diciembre todavía no muestra días de pago.
 
 **¿Cuándo tengo un fin de semana completo libre?**
 Con el rol actual nunca coinciden sábado y domingo libres juntos. En **Buscar** o en la vista **Día** te dice cuál es tu próximo sábado libre y tu próximo domingo libre.

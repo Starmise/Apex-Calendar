@@ -5,6 +5,7 @@ import { addDays, formatLong, isValidISO } from '../core/dates.js';
 import {
   nextFreeWeekend, nextHoliday, nextRest, nextRestOnWeekday, nextWork, relativeDays, streak,
 } from '../core/search.js';
+import { nextPayday } from '../core/paydays.js';
 import { el } from './common.js';
 import { capitalize, dayCard } from './day.js';
 
@@ -35,7 +36,7 @@ function streakText(iso) {
 }
 
 /** Panel con lo que viene después de `iso`. */
-export function upcomingPanel(iso, today) {
+export function upcomingPanel(iso, today, { bank = 'general' } = {}) {
   const panel = el('section', 'panel upcoming');
   const h = el('h3', null, iso === today ? 'Lo que sigue' : 'Después de este día');
   panel.append(h);
@@ -72,6 +73,9 @@ export function upcomingPanel(iso, today) {
     const worked = holiday.type === 'work' ? ' — se trabaja, paga x3' : ' — cae en descanso';
     row(dl, 'Próximo festivo', holiday.date, iso, ` · ${holiday.holiday}${worked}`);
   }
+
+  const pay = nextPayday(iso, { bank });
+  if (pay) row(dl, 'Próximo día de pago', pay.date, iso, bank === 'bbva' ? ' — cuenta BBVA' : '');
   panel.append(dl);
   return panel;
 }
@@ -80,7 +84,7 @@ export function upcomingPanel(iso, today) {
  * @param {HTMLElement} root
  * @param {{date: string|null, today: string, onSearch: (iso: string) => void}} opts
  */
-export function renderSearch(root, { date, today, onSearch }) {
+export function renderSearch(root, { date, today, onSearch, bank = 'general' }) {
   root.replaceChildren();
   const iso = date && isValidISO(date) ? date : today;
 
@@ -127,8 +131,8 @@ export function renderSearch(root, { date, today, onSearch }) {
   const rel = relativeDays(today, iso);
   h.append(el('span', 'search-rel', ` · ${rel}`));
   result.append(h);
-  result.append(dayCard(iso, today, { headingLevel: 'p' }));
-  result.append(upcomingPanel(iso, today));
+  result.append(dayCard(iso, today, { headingLevel: 'p', bank }));
+  result.append(upcomingPanel(iso, today, { bank }));
 
   const links = el('p', 'search-links');
   const week = el('a', null, 'Ver la semana');

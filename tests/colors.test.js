@@ -86,9 +86,11 @@ describe('las paletas se distinguen entre sí', () => {
 
 describe('ajustes y tema', () => {
   it('normaliza datos dañados o viejos', () => {
+    expect(normalizeSettings({ bank: 'bbva' }).bank).toBe('bbva');
+    expect(normalizeSettings({ bank: 'santander' }).bank).toBe('general');
     expect(normalizeSettings(null)).toEqual({ ...DEFAULT_SETTINGS, colors: {} });
     expect(normalizeSettings({ theme: 'morado', palette: 'nope', colors: { work: 'rojo', rest: '#ABCDEF', foo: '#000' } }))
-      .toEqual({ theme: 'auto', palette: 'pizarron', colors: { rest: '#abcdef' } });
+      .toEqual({ theme: 'auto', palette: 'pizarron', colors: { rest: '#abcdef' }, bank: 'general' });
   });
 
   it('color propio: el texto se calcula con buen contraste', () => {

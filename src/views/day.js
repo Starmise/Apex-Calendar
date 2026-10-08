@@ -2,17 +2,20 @@
 
 import { getDayInfo, shortRange } from '../core/schedule.js';
 import { formatLong } from '../core/dates.js';
-import { el, fmtHours, payBadge, payText, cycleText } from './common.js';
+import { paydayOn, paydayText } from '../core/paydays.js';
+import { el, fmtHours, payBadge, paydayBadge, payText, cycleText } from './common.js';
 
 /** Ficha de un día. La comparten la vista día y el buscador. */
-export function dayCard(iso, today, { headingLevel = 'h2' } = {}) {
+export function dayCard(iso, today, { headingLevel = 'h2', bank = 'general' } = {}) {
   const info = getDayInfo(iso);
+  const payday = paydayOn(iso, { bank });
   const card = el('article', `day-card ${info.type}`);
   if (iso === today) card.classList.add('today');
 
   const head = el('div', 'day-card-head');
   const status = el(headingLevel, 'day-card-status', info.type === 'work' ? 'Se trabaja' : 'Descanso');
   head.append(status);
+  if (payday) head.append(paydayBadge());
   if (info.pay > 1) head.append(payBadge(info.pay));
   card.append(head);
 
@@ -26,6 +29,7 @@ export function dayCard(iso, today, { headingLevel = 'h2' } = {}) {
   }
   fact('Paga', payText(info));
   if (info.holiday) fact('Festivo', info.holiday);
+  if (payday) fact('Quincena', paydayText(payday, { bank }));
   fact('Rol', cycleText(info));
   card.append(dl);
   return card;
@@ -36,7 +40,7 @@ export function dayCard(iso, today, { headingLevel = 'h2' } = {}) {
  * @param {{date: string, today: string, extras?: (iso: string) => Node[]}} opts
  *   extras: secciones adicionales (próximos descansos, recordatorios…).
  */
-export function renderDay(root, { date, today, extras = () => [] }) {
+export function renderDay(root, { date, today, extras = () => [], bank = 'general' }) {
   root.replaceChildren();
 
   const title = el('h2', 'view-title', capitalize(formatLong(date)));
@@ -45,7 +49,7 @@ export function renderDay(root, { date, today, extras = () => [] }) {
   if (date === today) title.append(el('span', 'today-tag', 'Hoy'));
   root.append(title);
 
-  const card = dayCard(date, today, { headingLevel: 'h3' });
+  const card = dayCard(date, today, { headingLevel: 'h3', bank });
   root.append(card);
   for (const node of extras(date)) root.append(node);
 }

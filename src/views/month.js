@@ -3,7 +3,8 @@
 
 import { getDayInfo, shortRange } from '../core/schedule.js';
 import { daysInMonth, fromParts, weekday, MONTHS_ES, WEEKDAYS_ES, WEEKDAYS_SHORT_ES } from '../core/dates.js';
-import { el, describe, fmtHours, payBadge } from './common.js';
+import { paydaysForMonth, paydayOn } from '../core/paydays.js';
+import { el, describe, fmtHours, payBadge, paydayBadge } from './common.js';
 
 /** Resumen de un rango de fechas: horas trabajadas y días con paga especial. */
 export function summarize(dates) {
@@ -28,6 +29,14 @@ export function monthSummary(year, month) {
   return summarize(monthDates(year, month));
 }
 
+/** 'Días de pago: 14 y 29 (BBVA)' / aviso de diciembre. */
+export function paydaySummary(year, month, bank) {
+  const list = paydaysForMonth(year, month, { bank });
+  if (!list.length) return `${MONTHS_ES[month - 1]}: días de pago pendientes de confirmar.`;
+  const days = list.map((p) => Number(p.date.slice(8))).join(' y ');
+  return `Días de pago: ${days}${bank === 'bbva' ? ' (cuenta BBVA)' : ''}.`;
+}
+
 export function summaryText(s) {
   return (
     `${s.workDays} ${s.workDays === 1 ? 'día' : 'días'} de trabajo · ${fmtHours(s.hours)} h` +
@@ -41,7 +50,7 @@ export function summaryText(s) {
  * @param {{date: string, today: string, focus?: string, reminders?: (iso: string) => number}} opts
  *   date = día 1 del mes; focus = día que recibe el foco del teclado.
  */
-export function renderMonth(root, { date, today, focus, reminders = () => 0 }) {
+export function renderMonth(root, { date, today, focus, reminders = () => 0, bank = 'general' }) {
   const year = Number(date.slice(0, 4));
   const month = Number(date.slice(5, 7));
   root.replaceChildren();
@@ -89,6 +98,7 @@ export function renderMonth(root, { date, today, focus, reminders = () => 0 }) {
     const iso = fromParts(year, month, day);
     const info = getDayInfo(iso);
     const count = reminders(iso);
+    const payday = paydayOn(iso, { bank });
     const link = el('a', `day ${info.type}`);
     link.href = `#/dia/${iso}`;
     link.dataset.date = iso;
@@ -99,17 +109,23 @@ export function renderMonth(root, { date, today, focus, reminders = () => 0 }) {
       link.setAttribute('aria-current', 'date');
     }
     if (info.holiday) link.classList.add('holiday');
+    if (payday) link.classList.add('payday');
     const extra = count ? ` · ${count} ${count === 1 ? 'recordatorio' : 'recordatorios'}` : '';
-    link.title = describe(info) + extra;
+    link.title = describe(info, payday) + extra;
     // Nombre accesible: texto oculto completo; lo visual (número, etiquetas) se oculta a lectores.
     link.append(
-      el('span', 'visually-hidden', `${WEEKDAYS_ES[weekday(iso)]} ${day}: ${describe(info)}${extra}${iso === today ? ' (hoy)' : ''}`),
+      el('span', 'visually-hidden', `${WEEKDAYS_ES[weekday(iso)]} ${day}: ${describe(info, payday)}${extra}${iso === today ? ' (hoy)' : ''}`),
     );
 
     const top = el('span', 'day-top');
     top.setAttribute('aria-hidden', 'true');
     top.append(el('span', 'day-num', String(day)));
-    if (info.pay > 1) top.append(payBadge(info.pay));
+    if (info.pay > 1 || payday) {
+      const badges = el('span', 'day-badges');
+      if (payday) badges.append(paydayBadge());
+      if (info.pay > 1) badges.append(payBadge(info.pay));
+      top.append(badges);
+    }
     link.append(top);
 
     const visual = [];
@@ -130,4 +146,5 @@ export function renderMonth(root, { date, today, focus, reminders = () => 0 }) {
   root.append(table);
 
   root.append(el('p', 'view-summary', summaryText(monthSummary(year, month))));
+  root.append(el('p', 'view-summary view-paydays', paydaySummary(year, month, bank)));
 }

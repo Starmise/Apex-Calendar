@@ -406,6 +406,37 @@ button:disabled {
   border-radius: 999px;
 }
 
+/* Día de pago: "$" con borde del color del texto del día, legible en cualquier paleta. */
+.day-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.payday-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+  padding: 2px 5px;
+  border-radius: 999px;
+  border: 1.5px solid currentColor;
+}
+
+.day-card .payday-badge {
+  font-size: 0.95rem;
+  padding: 4px 9px;
+}
+
+.week-payday {
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.view-summary + .view-paydays {
+  margin-top: 4px;
+}
+
 .pay-x2 {
   background: var(--x2-bg);
   color: var(--x2-fg);
@@ -1064,6 +1095,7 @@ kbd {
 
   .week-hours,
   .week-day .day-holiday,
+  .week-payday,
   .week-reminders {
     grid-column: 1 / -1;
   }
@@ -1146,6 +1178,11 @@ kbd {
   .pay {
     font-size: 0.62rem;
     padding: 2px 4px;
+  }
+
+  .payday-badge {
+    font-size: 0.62rem;
+    padding: 1px 4px;
   }
 
   .day-card-status {

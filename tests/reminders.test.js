@@ -79,7 +79,7 @@ describe('listas', () => {
 });
 
 describe('respaldo', () => {
-  const settings = { theme: 'dark', palette: 'vino', colors: {} };
+  const settings = { theme: 'dark', palette: 'vino', colors: {}, bank: 'bbva' };
 
   it('ida y vuelta', () => {
     const json = JSON.stringify(buildBackup({ settings, reminders: [r({})] }, new Date('2026-10-07T12:00:00Z')));

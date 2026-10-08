@@ -10,12 +10,20 @@ export function el(tag, className, text) {
   return node;
 }
 
-/** 'Trabajo 8–20 · Navidad · paga x3' */
-export function describe(info) {
+/** 'Trabajo 8–20 · Navidad · paga x3 · día de pago' */
+export function describe(info, payday = null) {
   const parts = [info.type === 'work' ? `Trabajo ${shortRange(info)}` : 'Descanso'];
   if (info.holiday) parts.push(info.holiday);
   if (info.pay > 1) parts.push(`paga x${info.pay}`);
+  if (payday) parts.push('día de pago');
   return parts.join(' · ');
+}
+
+/** Marca "$" del día de pago (solo visual; el texto accesible va aparte). */
+export function paydayBadge() {
+  const badge = el('span', 'payday-badge', '$');
+  badge.setAttribute('aria-hidden', 'true');
+  return badge;
 }
 
 /** 12 → '12', 12.5 → '12.5' */

@@ -21,6 +21,7 @@ Sitio web estático (GitHub Pages, costo cero) donde los empleados consultan su 
   - Por regla anual: 1 ene, 1er lunes feb, 3er lunes mar, 1 may, 16 sep, 3er lunes nov, 25 dic; 1 oct cada 6 años desde 2024.
   - Manuales en `MANUAL_HOLIDAYS` (`src/data/holidays-mx.js`): elecciones. Próxima: 2027-06-06. Agregar las siguientes cuando se publiquen.
 - **Paga** de un día trabajado: festivo x3 (aunque sea domingo, no se acumula) > domingo x2 > normal x1. Descanso = 0, pero el festivo/domingo se sigue marcando.
+- **Días de pago** (`src/core/paydays.js`): 15 y 30 de cada mes (febrero: último día). BBVA = un día antes que la empresa. Festivo → se adelanta un día, encadenado mientras siga siendo festivo; se aplica primero a la fecha de la empresa y luego a la de BBVA (30 festivo + BBVA → 28). Fines de semana no mueven el pago. **Diciembre sin días de pago** (`MONTHS_WITHOUT_PAYDAY`) hasta que el dueño revise la documentación de la empresa. El banco se guarda en `apex.settings.bank` (`general` | `bbva`).
 - "8–21" significa 08:00 a 21:00.
 
 ## Arquitectura
@@ -30,7 +31,8 @@ src/core/dates.js        fechas 'YYYY-MM-DD', aritmética en UTC (nunca usar fec
 src/core/schedule.js     getDayInfo(iso) → { type, start, end, hours, holiday, isSunday, pay, cycleIndex }
 src/core/search.js       findNext, nextRest, nextWork, nextFreeWeekend, nextHoliday, streak (límite 2 años)
 src/core/colors.js       contraste WCAG, readableText(bg) para colores propios
-src/core/settings.js     normalizeSettings: valida apex.settings (theme, palette, colors)
+src/core/settings.js     normalizeSettings: valida apex.settings (theme, palette, colors, bank)
+src/core/paydays.js      paydaysForMonth, paydayOn, nextPayday, paydayText (bank: 'general' | 'bbva')
 src/core/reminders.js    { id, date, time|null, text, repeat, notify }; occursOn, upcoming, respaldo (buildBackup/parseBackup)
 src/store/storage.js     createStore(): apex.* en localStorage, migraciones (DATA_VERSION), memoria si falla
 src/app/theme.js         buildThemeCSS/applyTheme: inyecta la paleta como <style id="apex-theme">
@@ -73,6 +75,8 @@ Principios: `core/` no toca DOM ni localStorage. Sin framework. Vite 8 + Vitest 
 - [x] **v1.0.0** — PWA instalable y offline (SW propio en `src/pwa/sw.js`), avisos de recordatorios con la app abierta, accesibilidad revisada con axe-core (WCAG 2.2 AA, 0 incidencias).
 - [x] **v1.1.0** — paletas rediseñadas y distintas entre sí (Pizarrón por defecto, Vino y menta, Cítrico, Lavanda, Alto contraste); README para usuarios sin experiencia técnica.
 - [x] **v1.2.0** — deslizar con el dedo para cambiar de mes, semana o día (izquierda = siguiente); respeta scroll vertical, zoom y "reducir movimiento"; no mueve el foco.
+- [x] **v1.3.0** — días de pago (marca $ en mes/semana/día/buscador, próximo pago), opción BBVA en Ajustes, adelanto por festivo; diciembre pendiente.
+- [ ] Pendiente — confirmar días de pago de diciembre.
 - [ ] Después — excepciones por fecha (vacaciones, permisos) en `apex.overrides`; editor de ciclo.
 
 Claves de localStorage: `apex.version` (DATA_VERSION de `src/store/storage.js`), `apex.settings`, `apex.reminders`; prevista `apex.overrides`. Al cambiar la forma de algo guardado: subir DATA_VERSION y agregar la migración en `MIGRATIONS`.
