@@ -1,7 +1,7 @@
 {
   "name": "apex-calendar",
   "private": true,
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Calendario de trabajo con rol de 14 días, domingos x2 y festivos x3.",
   "type": "module",
   "scripts": {

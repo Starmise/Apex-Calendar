@@ -2,6 +2,15 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); versionado semántico.
 
+## [1.3.1] - 2026-10-08
+
+### Corregido
+- **Deslizar en el celular a veces se atoraba**: el calendario seguía al dedo pero regresaba sin cambiar de mes, semana o día. Pasaba con el arco natural del pulgar: el gesto se rechazaba si al soltar había subido o bajado más de ~31°. Ahora, una vez que el gesto empezó de lado, solo se descarta si termina más vertical que horizontal.
+- El navegador ya no puede "robarse" un deslizamiento horizontal a medio camino para desplazar la página (eso cancelaba el gesto, sobre todo en iPhone). Si aun así lo cancela, se respeta el deslizamiento si ya era completo.
+- El gesto sigue funcionando aunque el dedo salga del calendario.
+- Deslizar de lado ya no activa el "atrás/adelante" del navegador.
+- El scroll vertical, el zoom con dos dedos y los botones ← Hoy → funcionan igual que antes.
+
 ## [1.3.0] - 2026-10-08
 
 ### Agregado

@@ -7,6 +7,8 @@
 html {
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   -webkit-text-size-adjust: 100%;
+  /* Deslizar de lado no debe activar el "atrás/adelante" del navegador. */
+  overscroll-behavior-x: none;
 }
 
 body {
@@ -77,6 +79,8 @@ main {
 /* Deslizar para cambiar de periodo: el navegador conserva el scroll vertical y el zoom;
    el gesto horizontal lo maneja src/app/swipe.js. */
 #view.swipeable {
+  /* Primero la versión simple: si un navegador no entiende "pinch-zoom", se queda con pan-y. */
+  touch-action: pan-y;
   touch-action: pan-y pinch-zoom;
 }
 
