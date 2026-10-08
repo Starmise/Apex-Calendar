@@ -66,10 +66,40 @@ main {
   margin: 0 auto;
   padding: 0 16px 24px;
   flex: 1;
+  /* Al deslizar, el calendario se mueve un poco de lado sin crear scroll horizontal. */
+  overflow-x: clip;
 }
 
 #view:focus {
   outline: none;
+}
+
+/* Deslizar para cambiar de periodo: el navegador conserva el scroll vertical y el zoom;
+   el gesto horizontal lo maneja src/app/swipe.js. */
+#view.swipeable {
+  touch-action: pan-y pinch-zoom;
+}
+
+.swipe-in-next {
+  animation: swipe-in-next 200ms ease-out;
+}
+
+.swipe-in-prev {
+  animation: swipe-in-prev 200ms ease-out;
+}
+
+@keyframes swipe-in-next {
+  from {
+    opacity: 0.3;
+    transform: translateX(40px);
+  }
+}
+
+@keyframes swipe-in-prev {
+  from {
+    opacity: 0.3;
+    transform: translateX(-40px);
+  }
 }
 
 /* Encabezado */

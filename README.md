@@ -36,6 +36,8 @@ Arriba hay unos botones para moverte por la app:
 - **Recordatorios** — apunta cosas que no quieres olvidar ("hoy nos traen comida a la oficina", "pagar la renta"). Pueden repetirse cada semana, cada mes, etc.
 - **Ajustes** — cambia los colores, activa el modo oscuro, haz un respaldo de tus recordatorios y más.
 
+En el celular también puedes **deslizar el dedo** sobre el calendario: hacia la izquierda para ir al mes (o semana, o día) siguiente y hacia la derecha para regresar.
+
 ---
 
 ## Ponerlo en tu pantalla de inicio (como una app)

@@ -24,6 +24,7 @@ import {
 } from './app/notifier.js';
 import { addDays, todayISO } from './core/dates.js';
 import { CALENDAR_VIEWS, focusDate, parseRoute, routeFor, routeHash, shiftRoute } from './app/router.js';
+import { attachSwipe } from './app/swipe.js';
 
 const view = document.getElementById('view');
 const toolbar = document.getElementById('toolbar');
@@ -179,13 +180,16 @@ let pendingFocus = null;
 let moveFocus = false;
 /** Selector que recibe el foco tras renderizar (p. ej. el resultado del buscador). */
 let pendingSelector = null;
+/** Tras deslizar con el dedo no se mueve el foco (evita el recuadro de foco en el título). */
+let skipFocus = false;
 
 const today = () => todayISO();
 const current = () => parseRoute(location.hash, today());
 
-function go(route, { focusDay = null } = {}) {
+function go(route, { focusDay = null, quiet = false } = {}) {
   pendingFocus = focusDay;
-  moveFocus = true;
+  moveFocus = !quiet;
+  skipFocus = quiet;
   const hash = routeHash(route);
   if (location.hash === hash) render();
   else location.hash = hash;
@@ -282,6 +286,8 @@ function render() {
   }
 
   toolbar.hidden = !CALENDAR_VIEWS.includes(route.view);
+  // En mes, semana y día se puede deslizar el dedo para cambiar de periodo.
+  view.classList.toggle('swipeable', CALENDAR_VIEWS.includes(route.view));
   const labels = PERIOD[route.view];
   if (labels) {
     prevBtn.setAttribute('aria-label', labels[0]);
@@ -290,7 +296,9 @@ function render() {
 
   document.title = `${view.querySelector('.view-title')?.firstChild?.textContent ?? ''} · Apex Calendar`;
 
-  if (pendingFocus) {
+  if (skipFocus) {
+    // nada: el gesto táctil no mueve el foco
+  } else if (pendingFocus) {
     view.querySelector(`[data-date="${pendingFocus}"]`)?.focus();
   } else if (pendingSelector) {
     view.querySelector(pendingSelector)?.focus();
@@ -300,6 +308,7 @@ function render() {
   pendingFocus = null;
   pendingSelector = null;
   moveFocus = false;
+  skipFocus = false;
 }
 
 prevBtn.addEventListener('click', () => go(shiftRoute(current(), -1)));
@@ -335,6 +344,12 @@ view.addEventListener('keydown', (e) => {
   } else {
     go(routeFor(route.view, target), { focusDay: target });
   }
+});
+
+// En pantallas táctiles, deslizar el dedo cambia de periodo (izquierda → siguiente).
+attachSwipe(view, {
+  enabled: () => CALENDAR_VIEWS.includes(current().view),
+  onSwipe: (delta) => go(shiftRoute(current(), delta), { quiet: true }),
 });
 
 // Fuera de la cuadrícula, ← y → cambian de periodo.
