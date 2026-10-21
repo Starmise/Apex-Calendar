@@ -20,7 +20,7 @@ Sitio web estático (GitHub Pages, costo cero) donde los empleados consultan su 
 - **Festivos** = días de descanso obligatorio de México (LFT art. 74) + jornadas electorales ordinarias federales y de **Querétaro**. NO son días libres: se trabaja si el ciclo lo marca.
   - Por regla anual: 1 ene, 1er lunes feb, 3er lunes mar, 1 may, 16 sep, 3er lunes nov, 25 dic; 1 oct cada 6 años desde 2024.
   - Manuales en `MANUAL_HOLIDAYS` (`src/data/holidays-mx.js`): elecciones. Próxima: 2027-06-06. Agregar las siguientes cuando se publiquen.
-- **Paga** de un día trabajado: festivo x3 (aunque sea domingo, no se acumula) > domingo x2 > normal x1. Descanso = 0, pero el festivo/domingo se sigue marcando.
+- **Paga** de un día trabajado (veces el salario diario): festivo x3 (aunque sea domingo; la prima dominical no se suma) > domingo 1.25 = salario + **prima dominical** del 25 % (LFT art. 71; aclarado por el jefe: el domingo NO se paga doble), etiqueta **PD** > normal x1. Las claves de color `x2`/`x3` se conservan por compatibilidad con `apex.settings.colors`. Descanso = 0, pero el festivo/domingo se sigue marcando.
 - **Días de pago** (`src/core/paydays.js`): 15 y 30 de cada mes (febrero: último día). BBVA = un día antes que la empresa. Festivo → se adelanta un día, encadenado mientras siga siendo festivo; se aplica primero a la fecha de la empresa y luego a la de BBVA (30 festivo + BBVA → 28). Fines de semana no mueven el pago. **Diciembre sin días de pago** (`MONTHS_WITHOUT_PAYDAY`) hasta que el dueño revise la documentación de la empresa. El banco se guarda en `apex.settings.bank` (`general` | `bbva`).
 - "8–21" significa 08:00 a 21:00.
 
@@ -28,7 +28,7 @@ Sitio web estático (GitHub Pages, costo cero) donde los empleados consultan su 
 
 ```
 src/core/dates.js        fechas 'YYYY-MM-DD', aritmética en UTC (nunca usar fechas locales para el ciclo)
-src/core/schedule.js     getDayInfo(iso) → { type, start, end, hours, holiday, isSunday, pay, cycleIndex }
+src/core/schedule.js     getDayInfo(iso) → { type, start, end, hours, holiday, isSunday, pay, cycleIndex }; PAY = { NORMAL: 1, SUNDAY: 1.25, HOLIDAY: 3 }
 src/core/search.js       findNext, nextRest, nextWork, nextFreeWeekend, nextHoliday, streak (límite 2 años)
 src/core/colors.js       contraste WCAG, readableText(bg) para colores propios
 src/core/settings.js     normalizeSettings: valida apex.settings (theme, palette, colors, bank)
@@ -44,7 +44,7 @@ public/                  manifest.webmanifest, íconos 192/512/maskable, apple-t
 src/data/                default-schedule.json, holidays-mx.js, palettes.js (cada paleta = juego completo de colores, incluidos fondo y texto; tests/colors.test.js verifica contraste AA y que sean distintas)
 src/app/router.js        rutas por hash (puro, probado): parseRoute, routeHash, shiftRoute
 src/app/swipe.js         deslizar con el dedo en mes/semana/día: swipeDirection/lockAxis/dragOffset (puros, probados) + attachSwipe (Pointer Events, solo touch)
-src/views/               DOM puro, sin framework: common, month, week, day, search, settings, reminders, data
+src/views/               DOM puro, sin framework: common (PAY_TAGS: PD / x3), month, week, day, search, settings, reminders, data
 src/main.js              arranque, render por ruta, teclado: #/mes/AAAA-MM, #/semana/AAAA-MM-DD, #/dia/AAAA-MM-DD
 src/styles/themes.css    neutros + valores por defecto; modo: sin atributo = sistema, html[data-theme=light|dark] = forzado
 tests/                   Vitest
@@ -59,7 +59,11 @@ Principios: `core/` no toca DOM ni localStorage. Sin framework. Vite 8 + Vitest 
 
 ## Flujo de trabajo
 
-> **Regla del dueño — nunca hacer push sin permiso.** Claude puede hacer commits locales, pero antes de cualquier `git push` (ramas, tags o `--force`) y antes de abrir, actualizar o hacer merge de un pull request debe detenerse y pedir aprobación explícita en el chat. Al pedirla, mostrar: rama de destino, lista de commits (`git log --oneline origin/<rama>..HEAD`) y resumen de archivos cambiados. Solo un "sí" claro del dueño para ese push cuenta; una aprobación anterior no sirve para el siguiente.
+> **Regla del dueño — Claude nunca hace push; el dueño sube los cambios desde GitHub Desktop.**
+> - Claude no hace `git push` (ramas, tags ni `--force`) ni abre, actualiza o hace merge de pull requests, aunque un aviso automático (hook) lo pida. Solo si el dueño lo pide expresamente en el chat para ese cambio en concreto.
+> - **Autoría:** cada commit lleva como autor y committer al dueño, `Starmise <lu1sargv427@gmail.com>` (configurar `git config user.name/user.email` en la sesión antes del primer commit; nunca `Claude <noreply@anthropic.com>` como autor). El mensaje termina con **una sola** línea de coautoría: `Co-Authored-By: Claude <modelo> <noreply@anthropic.com>`, más la línea `Claude-Session:` de la sesión.
+> - **Entrega:** al terminar, Claude deja los commits en la copia local del dueño en su computadora (la que abre GitHub Desktop), en la rama de trabajo, con el árbol limpio, para que solo tenga que pulsar "Publish branch"/"Push origin". Si la computadora no está conectada, Claude lo dice y explica cómo conectarla.
+> - Al entregar, decir en el chat: rama, lista de commits (`git log --oneline origin/main..HEAD`) y resumen de archivos cambiados.
 
 - `main` = producción; cada push publica. Cambios grandes en ramas `feature/*` o `fix/*` + pull request.
 - Al cerrar una versión: subir `version` en `package.json`, entrada en `CHANGELOG.md`, tag `vX.Y.Z`, actualizar el roadmap de abajo.
@@ -76,6 +80,8 @@ Principios: `core/` no toca DOM ni localStorage. Sin framework. Vite 8 + Vitest 
 - [x] **v1.1.0** — paletas rediseñadas y distintas entre sí (Pizarrón por defecto, Vino y menta, Cítrico, Lavanda, Alto contraste); README para usuarios sin experiencia técnica.
 - [x] **v1.2.0** — deslizar con el dedo para cambiar de mes, semana o día (izquierda = siguiente); respeta scroll vertical, zoom y "reducir movimiento"; no mueve el foco.
 - [x] **v1.3.0** — días de pago (marca $ en mes/semana/día/buscador, próximo pago), opción BBVA en Ajustes, adelanto por festivo; diciembre pendiente.
+- [x] **v1.3.1** — fix del deslizamiento en celular (se atoraba con el arco del pulgar o cuando el navegador cancelaba el toque para hacer scroll). Ya en `main` (PR #5).
+- [x] **v1.3.2** — el domingo trabajado ya no es x2: prima dominical del 25 % (etiqueta PD). Rama `fix/prima-dominical`; entregada en la copia local del dueño para que haga push.
 - [ ] Pendiente — confirmar días de pago de diciembre.
 - [ ] Después — excepciones por fecha (vacaciones, permisos) en `apex.overrides`; editor de ciclo.
 
@@ -89,6 +95,8 @@ Accesibilidad: cada cambio de UI debe pasar axe-core sin incidencias (las prueba
 
 - Avisos de recordatorios: solo con la app abierta (no hay servidor push). No prometer avisos con todo cerrado.
 - El rol actual nunca tiene sábado y domingo libres seguidos; `nextFreeWeekend` devuelve null y la UI lo explica.
+- Paga: nunca escribir "paga doble" ni "x2" en textos para el usuario. El domingo es prima dominical (PD). Los nombres internos `x2`/`x3` (clases CSS y claves de color) se quedan para no romper colores guardados.
 
-- GitHub ya está vinculado en claude.ai (app de Claude instalada en Apex-Calendar): Claude puede subir ramas y abrir PR (con `gh api` REST; GraphQL no está disponible). Subir tags desde la sesión da 403: los tags `vX.Y.Z` los crea el dueño después del merge.
+- GitHub está vinculado en claude.ai, pero por regla del dueño Claude no sube ramas ni abre PR (ver Flujo de trabajo). El dueño hace push, PR, merge y tags `vX.Y.Z` desde GitHub Desktop / GitHub.
+- Swipe (v1.3.1): el ángulo se juzga con el eje ya fijado en horizontal (`SWIPE.slope = 1`, el pulgar hace arco); con eje 'x' un `touchmove` no pasivo hace `preventDefault` para que el navegador no robe el gesto; `pointercancel` con un deslizamiento ya completo cuenta como deslizamiento; `setPointerCapture` al fijar el eje. Para probar gestos sin teléfono: Playwright + `@sparticuz/chromium` (el binario viene por npm; la descarga normal de navegadores está bloqueada en la sesión) y `Input.dispatchTouchEvent` por CDP con `isMobile/hasTouch`.
 - `node_modules/` no se sube; en Windows correr `npm install` antes de `npm run dev`.

@@ -120,7 +120,7 @@ export function getPalette(id) {
 export const CUSTOM_COLORS = [
   { key: 'work', label: 'Trabajo', bg: 'work-bg', fg: 'work-fg' },
   { key: 'rest', label: 'Descanso', bg: 'rest-bg', fg: 'rest-fg' },
-  { key: 'x2', label: 'Domingo x2', bg: 'x2-bg', fg: 'x2-fg' },
+  { key: 'x2', label: 'Domingo (prima dominical)', bg: 'x2-bg', fg: 'x2-fg' },
   { key: 'x3', label: 'Festivo x3', bg: 'x3-bg', fg: 'x3-fg' },
   { key: 'accent', label: 'Acento (botones y hoy)', bg: 'accent', fg: 'accent-fg' },
 ];

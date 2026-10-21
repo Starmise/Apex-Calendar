@@ -1,6 +1,6 @@
 // Piezas compartidas por las vistas.
 
-import { shortRange } from '../core/schedule.js';
+import { shortRange, PAY } from '../core/schedule.js';
 
 /** Crea un elemento con clase y texto opcionales. */
 export function el(tag, className, text) {
@@ -10,11 +10,20 @@ export function el(tag, className, text) {
   return node;
 }
 
-/** 'Trabajo 8–20 · Navidad · paga x3 · día de pago' */
+/**
+ * Etiqueta de paga especial. `cls` conserva los nombres históricos (x2 = domingo, x3 = festivo)
+ * porque son las claves de color guardadas en apex.settings.colors.
+ */
+const PAY_TAGS = {
+  [PAY.SUNDAY]: { cls: 'x2', text: 'PD', label: 'prima dominical' },
+  [PAY.HOLIDAY]: { cls: 'x3', text: 'x3', label: 'paga x3' },
+};
+
+/** 'Trabajo 8–20 · Navidad · paga x3 · día de pago' / 'Trabajo 8–21 · prima dominical' */
 export function describe(info, payday = null) {
   const parts = [info.type === 'work' ? `Trabajo ${shortRange(info)}` : 'Descanso'];
   if (info.holiday) parts.push(info.holiday);
-  if (info.pay > 1) parts.push(`paga x${info.pay}`);
+  if (PAY_TAGS[info.pay]) parts.push(PAY_TAGS[info.pay].label);
   if (payday) parts.push('día de pago');
   return parts.join(' · ');
 }
@@ -31,9 +40,10 @@ export function fmtHours(n) {
   return Number.isInteger(n) ? String(n) : n.toFixed(1);
 }
 
-/** Etiqueta x2 / x3. */
+/** Etiqueta PD (prima dominical) / x3 (festivo). */
 export function payBadge(pay) {
-  const badge = el('span', `pay pay-x${pay}`, `x${pay}`);
+  const tag = PAY_TAGS[pay];
+  const badge = el('span', `pay pay-${tag.cls}`, tag.text);
   badge.setAttribute('aria-hidden', 'true');
   return badge;
 }
@@ -45,12 +55,12 @@ export function payText(info) {
     if (info.isSunday) return 'Domingo de descanso: no hay paga extra.';
     return 'Día de descanso.';
   }
-  if (info.pay === 3) {
+  if (info.pay === PAY.HOLIDAY) {
     return info.isSunday
-      ? 'Festivo trabajado en domingo: paga triple (x3, no se suma al x2).'
+      ? 'Festivo trabajado en domingo: paga triple (x3); la prima dominical no se suma.'
       : 'Festivo trabajado: paga triple (x3).';
   }
-  if (info.pay === 2) return 'Domingo trabajado: paga doble (x2).';
+  if (info.pay === PAY.SUNDAY) return 'Domingo trabajado: paga normal más prima dominical (25 % extra, LFT art. 71). No es paga doble.';
   return 'Paga normal (x1).';
 }
 

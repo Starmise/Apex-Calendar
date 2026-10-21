@@ -130,13 +130,13 @@ export function renderSettings(root, { settings, onChange, sections = [], persis
   const preview = el('div', 'settings-preview');
   preview.setAttribute('aria-hidden', 'true');
   const sample = [
-    ['work', '8–21', 2], ['work', '8–21', 0], ['rest', '', 0], ['work', '8–20', 3], ['rest', '', 0],
+    ['work', '8–21', 'x2', 'PD'], ['work', '8–21'], ['rest', ''], ['work', '8–20', 'x3', 'x3'], ['rest', ''],
   ];
-  sample.forEach(([type, range, pay], i) => {
+  sample.forEach(([type, range, cls, tag], i) => {
     const d = el('span', `day ${type}`);
     const top = el('span', 'day-top');
     top.append(el('span', 'day-num', String(i + 4)));
-    if (pay) top.append(el('span', `pay pay-x${pay}`, `x${pay}`));
+    if (cls) top.append(el('span', `pay pay-${cls}`, tag));
     d.append(top);
     if (range) d.append(el('span', 'day-range', range));
     preview.append(d);

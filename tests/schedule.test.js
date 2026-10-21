@@ -75,10 +75,11 @@ describe('paga', () => {
     expect(getDayInfo('2026-08-04').pay).toBe(PAY.NORMAL);
   });
 
-  it('domingo trabajado = x2', () => {
+  it('domingo trabajado = salario + prima dominical del 25 %, no paga doble', () => {
     const d = getDayInfo('2026-08-09');
     expect(d.isSunday).toBe(true);
     expect(d.pay).toBe(PAY.SUNDAY);
+    expect(PAY.SUNDAY).toBe(1.25);
   });
 
   it('festivo trabajado = x3', () => {
@@ -87,7 +88,7 @@ describe('paga', () => {
     expect(getDayInfo('2026-12-25').pay).toBe(PAY.HOLIDAY);
   });
 
-  it('festivo en domingo trabajado = x3, no se acumula', () => {
+  it('festivo en domingo trabajado = x3, sin sumar la prima dominical', () => {
     const allWork = {
       anchor: '2026-01-01',
       cycle: [{ type: 'work', start: '08:00', end: '20:00' }],

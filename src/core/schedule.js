@@ -8,10 +8,13 @@ import { diffDays, mod, weekday } from './dates.js';
 export { defaultSchedule };
 
 /**
- * Multiplicadores de paga de un día trabajado.
- * Festivo trabajado = x3 aunque sea domingo (no se acumula con el x2).
+ * Paga de un día trabajado, en veces el salario diario.
+ * - Domingo: salario normal + prima dominical del 25 % (LFT art. 71) = 1.25. No es paga doble.
+ * - Festivo: triple (LFT art. 75). Si cae en domingo se queda en x3: la prima dominical
+ *   no se suma (decisión del dueño).
  */
-export const PAY = Object.freeze({ NORMAL: 1, SUNDAY: 2, HOLIDAY: 3 });
+export const SUNDAY_PREMIUM = 0.25;
+export const PAY = Object.freeze({ NORMAL: 1, SUNDAY: 1 + SUNDAY_PREMIUM, HOLIDAY: 3 });
 
 function hoursBetween(start, end) {
   const [sh, sm] = start.split(':').map(Number);
@@ -24,7 +27,7 @@ function hoursBetween(start, end) {
  * @param {string} iso fecha 'YYYY-MM-DD'
  * @param {object} [schedule] { anchor, cycle[] } — por defecto el rol compartido
  * @returns {{date, type: 'work'|'rest', start, end, hours, holiday, isSunday, pay, cycleIndex}}
- *   pay = 0 en descanso; 1, 2 o 3 en día trabajado.
+ *   pay = 0 en descanso; PAY.NORMAL (1), PAY.SUNDAY (1.25) o PAY.HOLIDAY (3) en día trabajado.
  */
 export function getDayInfo(iso, schedule = defaultSchedule) {
   const cycleIndex = mod(diffDays(schedule.anchor, iso), schedule.cycle.length);
