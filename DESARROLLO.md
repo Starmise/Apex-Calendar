@@ -22,8 +22,9 @@ El ciclo de 14 días empieza el domingo 2 de agosto de 2026 y está en `src/data
 | A | Descanso | Descanso | 8–20 | 8–20 | 8–20 | 8–20 | Descanso |
 | B | 8–21 | 8–21 | Descanso | Descanso | Descanso | Descanso | 8–21 |
 
-- Festivo trabajado: paga x3 (también si cae en domingo; no se suma al x2).
-- Domingo trabajado: paga x2.
+- Festivo trabajado: paga x3 (también si cae en domingo; no se suma la prima dominical).
+- Domingo trabajado: salario normal + prima dominical del 25 % (LFT art. 71), `PAY.SUNDAY = 1.25`. Etiqueta **PD**. No es paga doble.
+- Los colores siguen llamándose `x2-*` (domingo) y `x3-*` (festivo) porque son las claves guardadas en `apex.settings.colors`.
 - Festivo o domingo en descanso: se marca, sin paga.
 
 Festivos: Ley Federal del Trabajo art. 74 (se calculan solos cada año) + jornadas electorales federales y de Querétaro, que se agregan a mano en `MANUAL_HOLIDAYS` (`src/data/holidays-mx.js`) cuando se publican.

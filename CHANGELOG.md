@@ -2,6 +2,14 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); versionado semántico.
 
+## [1.3.2] - 2026-10-21
+
+### Corregido
+- **El domingo trabajado ya no se marca como paga doble (x2).** Se paga el salario normal más la **prima dominical** del 25 % que marca la Ley Federal del Trabajo (art. 71). La etiqueta ahora dice **PD** en Mes, Semana, Día, la leyenda y Ajustes.
+- La ficha del día, el buscador y el resumen del mes o la semana explican la prima dominical en lugar de "paga doble".
+- Festivo trabajado sigue siendo **x3**, también si cae en domingo (la prima dominical no se suma).
+- Los colores personalizados del domingo se conservan.
+
 ## [1.3.1] - 2026-10-08
 
 ### Corregido

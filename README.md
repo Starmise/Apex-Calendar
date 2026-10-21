@@ -1,6 +1,6 @@
 # Apex Calendar
 
-Nuestro calendario de trabajo para el celular o la computadora. Lo cree para que de un vistazo sepamos **qué días trabajamos, qué días descansamos y cuándo nos pagan doble o triple**.
+Nuestro calendario de trabajo para el celular o la computadora. Lo cree para que de un vistazo sepamos **qué días trabajamos, qué días descansamos, qué domingos llevan prima dominical y cuándo nos pagan triple**.
 
 ### 👉 Ábrelo aquí: **[starmise.github.io/Apex-Calendar](https://starmise.github.io/Apex-Calendar/)**
 
@@ -14,7 +14,7 @@ No se necesita crear cuenta, ni contraseña, ni descargar nada de la tienda de a
 | --- | --- |
 | 🟩 Día de color **verde oscuro** (como un pizarrón) | Trabajas. En el día viene tu horario, por ejemplo **8–20** (de 8 de la mañana a 8 de la noche). |
 | ⬜ Día **blanco** | Descansas. |
-| Etiqueta **x2** | Es domingo y trabajas: **paga doble**. |
+| Etiqueta **PD** | Es domingo y trabajas: **prima dominical** (tu sueldo del día más 25 % extra, como marca la ley). No es paga doble. |
 | Etiqueta **x3** | Es día festivo y trabajas: **paga triple**. |
 | Etiqueta **$** | Es tu día de pago (quincena). |
 | El día con **marco** | Es hoy. |
@@ -87,7 +87,7 @@ Por lo mismo, **si borras los datos del navegador o cambias de celular, se pierd
 Solo la primera vez que lo abres. Después funciona sin conexión.
 
 **¿Los festivos son días libres?**
-No. Si te toca trabajar en festivo, trabajas y se marca con **x3** (paga triple). Si cae en tu día de descanso, se marca pero no hay paga extra.
+No. Si te toca trabajar en festivo, trabajas y se marca con **x3** (paga triple). Si cae en tu día de descanso, se marca pero no hay paga extra. Si el festivo cae en domingo y trabajas, es **x3** (la prima dominical no se suma).
 
 **¿Qué día me pagan?**
 La empresa paga el **15** y el **30** de cada mes (en febrero, el último día). Si tienes cuenta **BBVA**, el depósito llega un día antes: el **14** y el **29**. Si el día de pago es festivo, se adelanta (por ejemplo, con BBVA y el 30 festivo, cobras el 28). Escoge tu banco en **Ajustes → Día de pago**. Diciembre todavía no muestra días de pago.

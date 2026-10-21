@@ -1,23 +1,23 @@
 // Vista mes: tabla domingo–sábado con el tipo de día, horario, paga y festivos.
 // Cada día es un enlace a su vista día.
 
-import { getDayInfo, shortRange } from '../core/schedule.js';
+import { getDayInfo, shortRange, PAY } from '../core/schedule.js';
 import { daysInMonth, fromParts, weekday, MONTHS_ES, WEEKDAYS_ES, WEEKDAYS_SHORT_ES } from '../core/dates.js';
 import { paydaysForMonth, paydayOn } from '../core/paydays.js';
 import { el, describe, fmtHours, payBadge, paydayBadge } from './common.js';
 
-/** Resumen de un rango de fechas: horas trabajadas y días con paga especial. */
+/** Resumen de un rango de fechas: horas trabajadas, domingos con prima dominical y festivos x3. */
 export function summarize(dates) {
-  let hours = 0, workDays = 0, x2 = 0, x3 = 0;
+  let hours = 0, workDays = 0, sundays = 0, holidays = 0;
   for (const iso of dates) {
     const info = getDayInfo(iso);
     if (info.type !== 'work') continue;
     workDays++;
     hours += info.hours;
-    if (info.pay === 2) x2++;
-    if (info.pay === 3) x3++;
+    if (info.pay === PAY.SUNDAY) sundays++;
+    if (info.pay === PAY.HOLIDAY) holidays++;
   }
-  return { hours, workDays, x2, x3 };
+  return { hours, workDays, sundays, holidays };
 }
 
 export function monthDates(year, month) {
@@ -40,8 +40,8 @@ export function paydaySummary(year, month, bank) {
 export function summaryText(s) {
   return (
     `${s.workDays} ${s.workDays === 1 ? 'día' : 'días'} de trabajo · ${fmtHours(s.hours)} h` +
-    (s.x2 ? ` · ${s.x2} ${s.x2 === 1 ? 'domingo' : 'domingos'} x2` : '') +
-    (s.x3 ? ` · ${s.x3} ${s.x3 === 1 ? 'festivo' : 'festivos'} x3` : '')
+    (s.sundays ? ` · ${s.sundays} ${s.sundays === 1 ? 'domingo' : 'domingos'} con prima dominical` : '') +
+    (s.holidays ? ` · ${s.holidays} ${s.holidays === 1 ? 'festivo' : 'festivos'} x3` : '')
   );
 }
 
