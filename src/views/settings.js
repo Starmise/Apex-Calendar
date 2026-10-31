@@ -76,9 +76,9 @@ export function renderSettings(root, { settings, onChange, sections = [], persis
 
   // Día de pago
   const bank = fieldset('Día de pago');
-  bank.append(el('p', 'settings-hint', 'La empresa paga el 15 y el 30 (en febrero, el último día). Si cae en festivo se adelanta.'));
+  bank.append(el('p', 'settings-hint', 'La empresa paga el 15 y el 30 (en febrero, el último día). Si cae en sábado, domingo o festivo, se adelanta al día hábil anterior. Diciembre se paga por adelantado, junto con el aguinaldo.'));
   bank.append(radio('bank', 'general', settings.bank !== 'bbva', 'Otro banco', 'Se marca el 15 y el 30'));
-  bank.append(radio('bank', 'bbva', settings.bank === 'bbva', 'BBVA', 'El depósito llega un día antes: 14 y 29'));
+  bank.append(radio('bank', 'bbva', settings.bank === 'bbva', 'BBVA', 'El depósito llega un día hábil antes: 14 y 29'));
   bank.addEventListener('change', (e) => onChange({ bank: e.target.value }));
   root.append(bank);
 

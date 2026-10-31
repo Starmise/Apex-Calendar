@@ -75,7 +75,10 @@ export function upcomingPanel(iso, today, { bank = 'general' } = {}) {
   }
 
   const pay = nextPayday(iso, { bank });
-  if (pay) row(dl, 'Próximo día de pago', pay.date, iso, bank === 'bbva' ? ' — cuenta BBVA' : '');
+  if (pay) {
+    const notes = [pay.kind === 'aguinaldo' ? 'aguinaldo' : '', bank === 'bbva' ? 'cuenta BBVA' : ''].filter(Boolean);
+    row(dl, 'Próximo día de pago', pay.date, iso, notes.length ? ` — ${notes.join(', ')}` : '');
+  }
   panel.append(dl);
   return panel;
 }

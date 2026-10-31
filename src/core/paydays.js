@@ -1,46 +1,83 @@
-// Días de pago (quincenas). Puro: no toca la pantalla ni el almacenamiento.
+// Días de pago (quincenas y aguinaldo). Puro: no toca la pantalla ni el almacenamiento.
 //
-// Reglas (confirmadas por el dueño):
+// Reglas (confirmadas por el dueño con el calendario de pagos 2026 de la empresa):
 // - La empresa paga el 15 y el 30 de cada mes; en febrero, el último día (28 o 29).
-// - Si ese día es festivo, el pago se adelanta un día, y sigue adelantándose
-//   mientras el día anterior también sea festivo. Sábados y domingos no cuentan.
-// - Con cuenta BBVA el depósito llega un día antes del de la empresa
-//   (y también se adelanta si ese día es festivo). Ej.: 30 festivo → empresa 29 → BBVA 28.
-// - Diciembre todavía no tiene días de pago (pendiente de revisar la documentación de la empresa).
+// - Si ese día cae en sábado o domingo, se paga el viernes anterior.
+// - Si cae en festivo, se adelanta un día. Ambas reglas se repiten hasta llegar a un
+//   día hábil (ej.: sábado con viernes festivo → jueves).
+// - Con cuenta BBVA el depósito llega un día antes del de la empresa, con las mismas
+//   reglas: 30 festivo → empresa 29 → BBVA 28; empresa lunes → BBVA viernes.
+// - Diciembre se paga por adelantado y además lleva aguinaldo: las fechas salen de
+//   la tabla de src/data/december-paydays.js. Sin datos de ese año → pendiente.
 
 import { holidayName } from '../data/holidays-mx.js';
-import { addDays, daysInMonth, fromParts } from './dates.js';
+import { DECEMBER_PAYDAYS } from '../data/december-paydays.js';
+import { addDays, daysInMonth, fromParts, weekday, WEEKDAYS_ES } from './dates.js';
 
 /** Bancos que cambian el día de pago. 'general' = cualquier banco que no sea BBVA. */
 export const BANKS = Object.freeze(['general', 'bbva']);
 
-/** Meses (1–12) sin días de pago por ahora. */
-export const MONTHS_WITHOUT_PAYDAY = Object.freeze([12]);
+const SATURDAY = 6;
+const SUNDAY = 0;
 
-/** Retrocede desde `iso` mientras sea festivo. */
-function beforeHolidays(iso) {
+function isWeekend(iso) {
+  const wd = weekday(iso);
+  return wd === SATURDAY || wd === SUNDAY;
+}
+
+/** Retrocede desde `iso` hasta un día que no sea sábado, domingo ni festivo. */
+export function toBusinessDay(iso) {
   let d = iso;
-  while (holidayName(d)) d = addDays(d, -1);
+  while (isWeekend(d) || holidayName(d)) d = addDays(d, -1);
   return d;
 }
 
+/** Fecha de BBVA: un día antes de la de la empresa, ya en día hábil. */
+function bbvaDate(companyDate) {
+  return toBusinessDay(addDays(companyDate, -1));
+}
+
+/** Diciembre: fechas publicadas por la empresa, o null si ese año no está. */
+function decemberPaydays(year) {
+  const data = DECEMBER_PAYDAYS[year];
+  if (!data) return null;
+  const list = [];
+  if (data.aguinaldo) {
+    list.push({ date: data.aguinaldo, kind: 'aguinaldo', quincena: null, nominal: data.aguinaldo });
+  }
+  data.quincenas.forEach((date, i) => {
+    list.push({ date, kind: 'quincena', quincena: i + 1, nominal: fromParts(year, 12, i === 0 ? 15 : 30) });
+  });
+  return list;
+}
+
 /**
- * Días de pago de un mes.
+ * Días de pago de un mes, ordenados por fecha.
  * @param {number} year
  * @param {number} month 1–12
  * @param {{bank?: 'general'|'bbva'}} [opts]
- * @returns {{date: string, quincena: 1|2, nominal: string, moved: boolean}[]}
- *   quincena 1 = la del 15, 2 = la del 30; nominal = el 15 o el 30 (fin de febrero) sin ajustes;
- *   moved = true si el festivo o el banco cambiaron el día.
+ * @returns {{date: string, kind: 'quincena'|'aguinaldo', quincena: 1|2|null, nominal: string, moved: boolean}[]}
+ *   quincena 1 = la del 15, 2 = la del 30 (null en el aguinaldo); nominal = el 15 o el 30
+ *   (fin de febrero) sin ajustes; moved = true si fin de semana, festivo, diciembre o el banco
+ *   cambiaron el día. Diciembre sin datos de ese año → [].
  */
 export function paydaysForMonth(year, month, { bank = 'general' } = {}) {
-  if (MONTHS_WITHOUT_PAYDAY.includes(month)) return [];
-  const nominals = [fromParts(year, month, 15), fromParts(year, month, Math.min(30, daysInMonth(year, month)))];
-  return nominals.map((nominal, i) => {
-    let date = beforeHolidays(nominal);
-    if (bank === 'bbva') date = beforeHolidays(addDays(date, -1));
-    return { date, quincena: i + 1, nominal, moved: date !== nominal };
-  });
+  let list;
+  if (month === 12) {
+    list = decemberPaydays(year);
+    if (!list) return [];
+  } else {
+    list = [15, Math.min(30, daysInMonth(year, month))].map((day, i) => {
+      const nominal = fromParts(year, month, day);
+      return { date: toBusinessDay(nominal), kind: 'quincena', quincena: i + 1, nominal };
+    });
+  }
+  return list
+    .map((p) => {
+      const date = bank === 'bbva' ? bbvaDate(p.date) : p.date;
+      return { ...p, date, moved: date !== p.nominal };
+    })
+    .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 }
 
 /** Día de pago que cae en `iso`, o null. */
@@ -70,12 +107,24 @@ export function nextPayday(iso, { bank = 'general', includeStart = false } = {})
   return null;
 }
 
-/** Texto para la ficha del día: 'Día de pago: quincena del 15'. */
+/** Nombre corto del pago: 'aguinaldo' / 'quincena del 15' / 'quincena de fin de mes'. */
+export function paydayName(p) {
+  if (p.kind === 'aguinaldo') return 'aguinaldo';
+  if (p.quincena === 1) return 'quincena del 15';
+  return Number(p.nominal.slice(8)) === 30 ? 'quincena del 30' : 'quincena de fin de mes';
+}
+
+/** Texto para la ficha del día: 'Día de pago: quincena del 15 (el 15 cae en domingo).' */
 export function paydayText(p, { bank = 'general' } = {}) {
-  const which = p.quincena === 1 ? 'del 15' : Number(p.nominal.slice(8)) === 30 ? 'del 30' : 'de fin de mes';
   const reasons = [];
   if (bank === 'bbva') reasons.push('un día antes por BBVA');
-  if (holidayName(p.nominal)) reasons.push(`el ${Number(p.nominal.slice(8))} es festivo`);
+  if (p.kind === 'aguinaldo') {
+    return `Pago de aguinaldo${reasons.length ? ` (${reasons.join('; ')})` : ''}.`;
+  }
+  const day = Number(p.nominal.slice(8));
+  if (p.nominal.slice(5, 7) === '12') reasons.push('en diciembre se paga por adelantado');
+  else if (holidayName(p.nominal)) reasons.push(`el ${day} es festivo`);
+  else if (isWeekend(p.nominal)) reasons.push(`el ${day} cae en ${WEEKDAYS_ES[weekday(p.nominal)]}`);
   else if (bank !== 'bbva' && p.moved) reasons.push('se adelantó por festivo');
-  return `Día de pago: quincena ${which}${reasons.length ? ` (${reasons.join('; ')})` : ''}.`;
+  return `Día de pago: ${paydayName(p)}${reasons.length ? ` (${reasons.join('; ')})` : ''}.`;
 }

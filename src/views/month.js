@@ -29,12 +29,14 @@ export function monthSummary(year, month) {
   return summarize(monthDates(year, month));
 }
 
-/** 'Días de pago: 14 y 29 (BBVA)' / aviso de diciembre. */
+/** 'Días de pago: 14 y 29 (cuenta BBVA).' / 'Días de pago: 11 y 18 · aguinaldo: 4.' / pendiente. */
 export function paydaySummary(year, month, bank) {
   const list = paydaysForMonth(year, month, { bank });
   if (!list.length) return `${MONTHS_ES[month - 1]}: días de pago pendientes de confirmar.`;
-  const days = list.map((p) => Number(p.date.slice(8))).join(' y ');
-  return `Días de pago: ${days}${bank === 'bbva' ? ' (cuenta BBVA)' : ''}.`;
+  const day = (p) => Number(p.date.slice(8));
+  const days = list.filter((p) => p.kind === 'quincena').map(day).join(' y ');
+  const bonus = list.filter((p) => p.kind === 'aguinaldo').map(day);
+  return `Días de pago: ${days}${bonus.length ? ` · aguinaldo: ${bonus.join(' y ')}` : ''}${bank === 'bbva' ? ' (cuenta BBVA)' : ''}.`;
 }
 
 export function summaryText(s) {

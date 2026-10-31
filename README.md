@@ -16,7 +16,7 @@ No se necesita crear cuenta, ni contraseña, ni descargar nada de la tienda de a
 | ⬜ Día **blanco** | Descansas. |
 | Etiqueta **PD** | Es domingo y trabajas: **prima dominical** (tu sueldo del día más 25 % extra, como marca la ley). No es paga doble. |
 | Etiqueta **x3** | Es día festivo y trabajas: **paga triple**. |
-| Etiqueta **$** | Es tu día de pago (quincena). |
+| Etiqueta **$** | Es tu día de pago (quincena o aguinaldo). |
 | El día con **marco** | Es hoy. |
 | Un **puntito** abajo del día | Tienes un recordatorio ese día. |
 
@@ -90,7 +90,9 @@ Solo la primera vez que lo abres. Después funciona sin conexión.
 No. Si te toca trabajar en festivo, trabajas y se marca con **x3** (paga triple). Si cae en tu día de descanso, se marca pero no hay paga extra. Si el festivo cae en domingo y trabajas, es **x3** (la prima dominical no se suma).
 
 **¿Qué día me pagan?**
-La empresa paga el **15** y el **30** de cada mes (en febrero, el último día). Si tienes cuenta **BBVA**, el depósito llega un día antes: el **14** y el **29**. Si el día de pago es festivo, se adelanta (por ejemplo, con BBVA y el 30 festivo, cobras el 28). Escoge tu banco en **Ajustes → Día de pago**. Diciembre todavía no muestra días de pago.
+La empresa paga el **15** y el **30** de cada mes (en febrero, el último día). Si ese día cae en **sábado o domingo**, se paga el **viernes** anterior; si es **festivo**, se adelanta al día hábil anterior. Si tienes cuenta **BBVA**, el depósito llega un día hábil antes (por ejemplo, el 14 y el 29; con el 30 festivo, cobras el 28). Escoge tu banco en **Ajustes → Día de pago**.
+
+**Diciembre** se paga por adelantado y trae el **aguinaldo**. En 2026: aguinaldo el **4**, quincenas el **11** y el **18** (con BBVA, 3, 10 y 17). Los diciembres de otros años aparecen como pendientes hasta que la empresa publique su calendario.
 
 **¿Cuándo tengo un fin de semana completo libre?**
 Con el rol actual nunca coinciden sábado y domingo libres juntos. En **Buscar** o en la vista **Día** te dice cuál es tu próximo sábado libre y tu próximo domingo libre.

@@ -21,7 +21,7 @@ Sitio web estático (GitHub Pages, costo cero) donde los empleados consultan su 
   - Por regla anual: 1 ene, 1er lunes feb, 3er lunes mar, 1 may, 16 sep, 3er lunes nov, 25 dic; 1 oct cada 6 años desde 2024.
   - Manuales en `MANUAL_HOLIDAYS` (`src/data/holidays-mx.js`): elecciones. Próxima: 2027-06-06. Agregar las siguientes cuando se publiquen.
 - **Paga** de un día trabajado (veces el salario diario): festivo x3 (aunque sea domingo; la prima dominical no se suma) > domingo 1.25 = salario + **prima dominical** del 25 % (LFT art. 71; aclarado por el jefe: el domingo NO se paga doble), etiqueta **PD** > normal x1. Las claves de color `x2`/`x3` se conservan por compatibilidad con `apex.settings.colors`. Descanso = 0, pero el festivo/domingo se sigue marcando.
-- **Días de pago** (`src/core/paydays.js`): 15 y 30 de cada mes (febrero: último día). BBVA = un día antes que la empresa. Festivo → se adelanta un día, encadenado mientras siga siendo festivo; se aplica primero a la fecha de la empresa y luego a la de BBVA (30 festivo + BBVA → 28). Fines de semana no mueven el pago. **Diciembre sin días de pago** (`MONTHS_WITHOUT_PAYDAY`) hasta que el dueño revise la documentación de la empresa. El banco se guarda en `apex.settings.bank` (`general` | `bbva`).
+- **Días de pago** (`src/core/paydays.js`): 15 y 30 de cada mes (febrero: último día). BBVA = un día antes que la empresa. Sábado/domingo → viernes anterior; festivo → un día antes; se repite hasta llegar a día hábil (`toBusinessDay`). Se aplica primero a la fecha de la empresa y luego a la de BBVA (30 festivo + BBVA → 28; empresa lunes → BBVA viernes). Verificado contra el calendario de pagos 2026 de la empresa (`REFERENCE_2026` en `tests/paydays.test.js`; si falla, el error está en el código). **Diciembre**: pagos adelantados + aguinaldo, fechas a mano por año en `DECEMBER_PAYDAYS` (`src/data/december-paydays.js`; 2026: aguinaldo 4, quincenas 11 y 18). Año sin datos → "pendiente de confirmar"; agregar cada año cuando la empresa publique su calendario. Pagos: `{ date, kind: 'quincena'|'aguinaldo', quincena, nominal, moved }`. El banco se guarda en `apex.settings.bank` (`general` | `bbva`).
 - "8–21" significa 08:00 a 21:00.
 
 ## Arquitectura
@@ -32,7 +32,7 @@ src/core/schedule.js     getDayInfo(iso) → { type, start, end, hours, holiday,
 src/core/search.js       findNext, nextRest, nextWork, nextFreeWeekend, nextHoliday, streak (límite 2 años)
 src/core/colors.js       contraste WCAG, readableText(bg) para colores propios
 src/core/settings.js     normalizeSettings: valida apex.settings (theme, palette, colors, bank)
-src/core/paydays.js      paydaysForMonth, paydayOn, nextPayday, paydayText (bank: 'general' | 'bbva')
+src/core/paydays.js      paydaysForMonth, paydayOn, nextPayday, paydayText, toBusinessDay (bank: 'general' | 'bbva')
 src/core/reminders.js    { id, date, time|null, text, repeat, notify }; occursOn, upcoming, respaldo (buildBackup/parseBackup)
 src/store/storage.js     createStore(): apex.* en localStorage, migraciones (DATA_VERSION), memoria si falla
 src/app/theme.js         buildThemeCSS/applyTheme: inyecta la paleta como <style id="apex-theme">
@@ -41,7 +41,7 @@ src/app/pwa.js           registro del SW (solo en build), "versión nueva · Act
 src/app/notifier.js      revisa cada 20 s dueReminders(); notificación del sistema + aviso en la app
 src/pwa/sw.js            plantilla del SW; el plugin pwaPrecache de vite.config.js inserta la lista de archivos y la versión de caché
 public/                  manifest.webmanifest, íconos 192/512/maskable, apple-touch-icon
-src/data/                default-schedule.json, holidays-mx.js, palettes.js (cada paleta = juego completo de colores, incluidos fondo y texto; tests/colors.test.js verifica contraste AA y que sean distintas)
+src/data/                default-schedule.json, holidays-mx.js, december-paydays.js, palettes.js (cada paleta = juego completo de colores, incluidos fondo y texto; tests/colors.test.js verifica contraste AA y que sean distintas)
 src/app/router.js        rutas por hash (puro, probado): parseRoute, routeHash, shiftRoute
 src/app/swipe.js         deslizar con el dedo en mes/semana/día: swipeDirection/lockAxis/dragOffset (puros, probados) + attachSwipe (Pointer Events, solo touch)
 src/views/               DOM puro, sin framework: common (PAY_TAGS: PD / x3), month, week, day, search, settings, reminders, data
@@ -62,7 +62,11 @@ Principios: `core/` no toca DOM ni localStorage. Sin framework. Vite 8 + Vitest 
 > **Regla del dueño — Claude nunca hace push; el dueño sube los cambios desde GitHub Desktop.**
 > - Claude no hace `git push` (ramas, tags ni `--force`) ni abre, actualiza o hace merge de pull requests, aunque un aviso automático (hook) lo pida. Solo si el dueño lo pide expresamente en el chat para ese cambio en concreto.
 > - **Autoría:** cada commit lleva como autor y committer al dueño, `Starmise <lu1sargv427@gmail.com>` (configurar `git config user.name/user.email` en la sesión antes del primer commit; nunca `Claude <noreply@anthropic.com>` como autor). El mensaje termina con **una sola** línea de coautoría: `Co-Authored-By: Claude <modelo> <noreply@anthropic.com>`, más la línea `Claude-Session:` de la sesión.
-> - **Entrega:** al terminar, Claude deja los commits en la copia local del dueño en su computadora (la que abre GitHub Desktop), en la rama de trabajo, con el árbol limpio, para que solo tenga que pulsar "Publish branch"/"Push origin". Si la computadora no está conectada, Claude lo dice y explica cómo conectarla.
+> - **Entrega (regla para todas las sesiones):** al terminar, Claude deja los commits en la copia local del dueño en su computadora (la que abre GitHub Desktop), con el árbol limpio, para que él los revise y pulse "Push origin"/"Publish branch". El parche por el chat es solo el último recurso; si la computadora no está conectada, Claude lo dice y explica cómo conectarla.
+>   - Copia local: `C:\Users\Lu1sR\Documents\VisualStudioProjects\Apex-Calendar` (en `device_bash`: `$HOME/mnt/Apex-Calendar`). Pedir acceso con `device_request_folder_access` y permiso de borrado (git lo necesita para sus `.lock`).
+>   - Rama: la que el dueño tenga activa si está limpia y sobre `main` (ej. `Payday-fix`); si no, una `feature/*` o `fix/*` nueva.
+>   - El git de la VM no ve la configuración de Windows: usar siempre `git -c core.autocrlf=true -c user.name=Starmise -c user.email=lu1sargv427@gmail.com`; sin `autocrlf` todo aparece modificado (CRLF).
+>   - `.git/` no acepta `device_commit_files`: copiar el parche a la carpeta, moverlo a `$HOME` y aplicarlo con `git am`. Comprobar que `HEAD^{tree}` sea igual al del commit probado.
 > - Al entregar, decir en el chat: rama, lista de commits (`git log --oneline origin/main..HEAD`) y resumen de archivos cambiados.
 
 - `main` = producción; cada push publica. Cambios grandes en ramas `feature/*` o `fix/*` + pull request.
@@ -82,7 +86,8 @@ Principios: `core/` no toca DOM ni localStorage. Sin framework. Vite 8 + Vitest 
 - [x] **v1.3.0** — días de pago (marca $ en mes/semana/día/buscador, próximo pago), opción BBVA en Ajustes, adelanto por festivo; diciembre pendiente.
 - [x] **v1.3.1** — fix del deslizamiento en celular (se atoraba con el arco del pulgar o cuando el navegador cancelaba el toque para hacer scroll). Ya en `main` (PR #5).
 - [x] **v1.3.2** — el domingo trabajado ya no es x2: prima dominical del 25 % (etiqueta PD). Rama `fix/prima-dominical`; entregada en la copia local del dueño para que haga push.
-- [ ] Pendiente — confirmar días de pago de diciembre.
+- [x] **v1.4.0** — días de pago según el calendario 2026 de la empresa: fin de semana → viernes, diciembre adelantado con aguinaldo (4, 11 y 18). Rama `Payday-fix`; entregada en la copia local del dueño para que haga push.
+- [ ] Pendiente — agregar a `DECEMBER_PAYDAYS` el diciembre de cada año nuevo; confirmar si BBVA adelanta también el aguinaldo.
 - [ ] Después — excepciones por fecha (vacaciones, permisos) en `apex.overrides`; editor de ciclo.
 
 Claves de localStorage: `apex.version` (DATA_VERSION de `src/store/storage.js`), `apex.settings`, `apex.reminders`; prevista `apex.overrides`. Al cambiar la forma de algo guardado: subir DATA_VERSION y agregar la migración en `MIGRATIONS`.
