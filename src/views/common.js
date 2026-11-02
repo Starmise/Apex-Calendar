@@ -24,7 +24,7 @@ export function describe(info, payday = null) {
   const parts = [info.type === 'work' ? `Trabajo ${shortRange(info)}` : 'Descanso'];
   if (info.holiday) parts.push(info.holiday);
   if (PAY_TAGS[info.pay]) parts.push(PAY_TAGS[info.pay].label);
-  if (payday) parts.push('día de pago');
+  if (payday) parts.push(payday.kind === 'aguinaldo' ? 'aguinaldo' : 'día de pago');
   return parts.join(' · ');
 }
 

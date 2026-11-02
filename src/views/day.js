@@ -29,7 +29,7 @@ export function dayCard(iso, today, { headingLevel = 'h2', bank = 'general' } = 
   }
   fact('Paga', payText(info));
   if (info.holiday) fact('Festivo', info.holiday);
-  if (payday) fact('Quincena', paydayText(payday, { bank }));
+  if (payday) fact(payday.kind === 'aguinaldo' ? 'Aguinaldo' : 'Quincena', paydayText(payday, { bank }));
   fact('Rol', cycleText(info));
   card.append(dl);
   return card;

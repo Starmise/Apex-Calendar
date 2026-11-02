@@ -61,7 +61,7 @@ export function renderWeek(root, { date, today, focus, reminders = () => [], ban
     );
     if (info.type === 'work') link.append(el('span', 'week-hours', `${fmtHours(info.hours)} h`));
     if (info.holiday) link.append(el('span', 'day-holiday', info.holiday));
-    if (payday) link.append(el('span', 'week-payday', 'Día de pago'));
+    if (payday) link.append(el('span', 'week-payday', payday.kind === 'aguinaldo' ? 'Aguinaldo' : 'Día de pago'));
 
     if (items.length) {
       const ul = el('ul', 'week-reminders');

@@ -2,6 +2,19 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/); versionado semántico.
 
+## [1.4.0] - 2026-10-31
+
+### Cambiado
+- **Los días de pago siguen el calendario de pagos 2026 de la empresa.** Si el 15 o el 30 cae en sábado o domingo, se paga el viernes anterior (antes se marcaba el mismo sábado o domingo). Ej.: agosto 2026 paga el 14 y el 28.
+- El festivo sigue adelantando el pago; ahora las dos reglas se combinan hasta llegar a un día hábil.
+- Con BBVA el depósito llega un día hábil antes: si la empresa paga en lunes, BBVA cobra el viernes.
+
+### Agregado
+- **Diciembre ya tiene días de pago**: se paga por adelantado y con **aguinaldo**. En 2026: aguinaldo el 4, quincenas el 11 y el 18 (BBVA: 3, 10 y 17). Las fechas se toman de `src/data/december-paydays.js`; los años sin datos siguen como pendientes.
+- El aguinaldo se marca con **$** y se nombra como tal en Mes, Semana, Día, Buscar y el resumen del mes.
+- La ficha del día explica si el pago se movió por fin de semana, festivo, diciembre o BBVA.
+- Prueba de referencia con las 25 fechas del calendario de pagos 2026 (`tests/paydays.test.js`).
+
 ## [1.3.2] - 2026-10-21
 
 ### Corregido
